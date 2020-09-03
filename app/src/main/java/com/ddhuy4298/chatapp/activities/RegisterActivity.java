@@ -34,10 +34,12 @@ public class RegisterActivity extends AppCompatActivity implements RegisterActiv
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(getResources().getColor(R.color.register_bk_color));
         binding = DataBindingUtil.setContentView(this, R.layout.activity_register);
+
         binding.setListener(this);
     }
 

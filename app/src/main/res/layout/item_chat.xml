@@ -10,7 +10,7 @@
 
         <variable
             name="listener"
-            type="com.ddhuy4298.chatapp.listeners.UserFragmentListener" />
+            type="com.ddhuy4298.chatapp.listeners.UserListener" />
     </data>
 
     <LinearLayout

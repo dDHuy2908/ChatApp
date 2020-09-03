@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ddhuy4298.chatapp.R;
 import com.ddhuy4298.chatapp.databinding.ItemChatBinding;
-import com.ddhuy4298.chatapp.listeners.UserFragmentListener;
+import com.ddhuy4298.chatapp.listeners.UserListener;
 import com.ddhuy4298.chatapp.models.Message;
 import com.ddhuy4298.chatapp.models.User;
 import com.google.firebase.auth.FirebaseAuth;
@@ -19,7 +19,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,7 +28,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatHolder> {
 
     private ArrayList<User> data;
     private LayoutInflater inflater;
-    private UserFragmentListener listener;
+    private UserListener listener;
     private String lastedMessage;
 
     public ChatAdapter(LayoutInflater inflater) {
@@ -41,7 +40,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatHolder> {
         notifyDataSetChanged();
     }
 
-    public void setListener(UserFragmentListener listener) {
+    public void setListener(UserListener listener) {
         this.listener = listener;
     }
 

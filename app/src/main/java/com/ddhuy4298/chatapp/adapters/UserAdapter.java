@@ -8,16 +8,9 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ddhuy4298.chatapp.R;
-import com.ddhuy4298.chatapp.listeners.UserFragmentListener;
-import com.ddhuy4298.chatapp.models.Message;
+import com.ddhuy4298.chatapp.listeners.UserListener;
 import com.ddhuy4298.chatapp.models.User;
 import com.ddhuy4298.chatapp.databinding.ItemUserBinding;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -25,7 +18,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserHolder>{
 
     private ArrayList<User> data;
     private LayoutInflater inflater;
-    private UserFragmentListener listener;
+    private UserListener listener;
 
     public UserAdapter(LayoutInflater inflater) {
         this.inflater = inflater;
@@ -36,7 +29,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserHolder>{
         notifyDataSetChanged();
     }
 
-    public void setListener(UserFragmentListener listener) {
+    public void setListener(UserListener listener) {
         this.listener = listener;
     }
 

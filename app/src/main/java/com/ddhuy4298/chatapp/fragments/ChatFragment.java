@@ -2,8 +2,9 @@ package com.ddhuy4298.chatapp.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -11,9 +12,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.ddhuy4298.chatapp.R;
 import com.ddhuy4298.chatapp.activities.ChatActivity;
+import com.ddhuy4298.chatapp.activities.ProfileActivity;
 import com.ddhuy4298.chatapp.adapters.ChatAdapter;
 import com.ddhuy4298.chatapp.databinding.FragmentChatBinding;
-import com.ddhuy4298.chatapp.listeners.UserFragmentListener;
+import com.ddhuy4298.chatapp.listeners.UserListener;
 import com.ddhuy4298.chatapp.models.Chatted;
 import com.ddhuy4298.chatapp.models.User;
 import com.google.firebase.auth.FirebaseAuth;
@@ -27,7 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-public class ChatFragment extends BaseFragment<FragmentChatBinding> implements UserFragmentListener {
+public class ChatFragment extends BaseFragment<FragmentChatBinding> implements UserListener, View.OnClickListener {
 
     private ChatAdapter adapter;
     private String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -76,6 +78,8 @@ public class ChatFragment extends BaseFragment<FragmentChatBinding> implements U
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("");
         ((AppCompatActivity) getActivity()).getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         binding.toolbar.setNavigationIcon(null);
+        ImageView imageView = binding.toolbar.findViewById(R.id.avatar);
+        imageView.setOnClickListener(this);
     }
 
     private void getChattedList(final ArrayList<Chatted> chattedList) {
@@ -113,6 +117,12 @@ public class ChatFragment extends BaseFragment<FragmentChatBinding> implements U
     public void onUserClick(User user) {
         Intent intent = new Intent(getContext(), ChatActivity.class);
         intent.putExtra("userId", user.getId());
+        startActivity(intent);
+    }
+
+    @Override
+    public void onClick(View v) {
+        Intent intent = new Intent(getActivity(), ProfileActivity.class);
         startActivity(intent);
     }
 }

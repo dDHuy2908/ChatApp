@@ -2,7 +2,9 @@ package com.ddhuy4298.chatapp.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -10,10 +12,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.ddhuy4298.chatapp.R;
 import com.ddhuy4298.chatapp.activities.ChatActivity;
+import com.ddhuy4298.chatapp.activities.ProfileActivity;
 import com.ddhuy4298.chatapp.adapters.UserAdapter;
 import com.ddhuy4298.chatapp.databinding.FragmentUserBinding;
-import com.ddhuy4298.chatapp.listeners.UserFragmentListener;
-import com.ddhuy4298.chatapp.models.Message;
+import com.ddhuy4298.chatapp.listeners.UserListener;
 import com.ddhuy4298.chatapp.models.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -24,7 +26,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class UserFragment extends BaseFragment<FragmentUserBinding> implements UserFragmentListener {
+public class UserFragment extends BaseFragment<FragmentUserBinding> implements UserListener, View.OnClickListener {
 
     private UserAdapter adapter;
 
@@ -74,12 +76,20 @@ public class UserFragment extends BaseFragment<FragmentUserBinding> implements U
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("");
         ((AppCompatActivity) getActivity()).getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         binding.toolbar.setNavigationIcon(null);
+        ImageView imageView = binding.toolbar.findViewById(R.id.avatar);
+        imageView.setOnClickListener(this);
     }
 
     @Override
     public void onUserClick(User user) {
         Intent intent = new Intent(getContext(), ChatActivity.class);
         intent.putExtra("userId", user.getId());
+        startActivity(intent);
+    }
+
+    @Override
+    public void onClick(View v) {
+        Intent intent = new Intent(getActivity(), ProfileActivity.class);
         startActivity(intent);
     }
 }

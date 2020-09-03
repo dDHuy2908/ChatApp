@@ -69,15 +69,15 @@ public class MainActivity extends AppCompatActivity {
         binding.spaceNav.setSpaceOnClickListener(new SpaceOnClickListener() {
             @Override
             public void onCentreButtonClick() {
-                if (clickable) {
-                    firebaseAuth.signOut();
-                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                    startActivity(intent);
-                    finish();
-                    binding.spaceNav.setEnabled(false);
-                    binding.spaceNav.setClickable(false);
-                }
-                clickable = false;
+//                if (clickable) {
+//                    firebaseAuth.signOut();
+//                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+//                    startActivity(intent);
+//                    finish();
+//                    binding.spaceNav.setEnabled(false);
+//                    binding.spaceNav.setClickable(false);
+//                }
+//                clickable = false;
             }
 
             @Override
