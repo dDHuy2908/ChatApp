@@ -29,15 +29,13 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private ChatFragment fmChat = new ChatFragment();
     private UserFragment fmUser = new UserFragment();
-    private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-    private boolean clickable = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(getResources().getColor(R.color.login_bk_color));
+        window.setStatusBarColor(getResources().getColor(R.color.colorAccent));
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
         initFragment();
@@ -69,15 +67,7 @@ public class MainActivity extends AppCompatActivity {
         binding.spaceNav.setSpaceOnClickListener(new SpaceOnClickListener() {
             @Override
             public void onCentreButtonClick() {
-//                if (clickable) {
-//                    firebaseAuth.signOut();
-//                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-//                    startActivity(intent);
-//                    finish();
-//                    binding.spaceNav.setEnabled(false);
-//                    binding.spaceNav.setClickable(false);
-//                }
-//                clickable = false;
+
             }
 
             @Override

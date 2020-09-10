@@ -8,6 +8,7 @@ import android.view.MotionEvent;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -81,6 +82,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterActiv
                         user.setPassword(password);
                         user.setPhone(phone);
                         user.setId(userId);
+                        user.setAvatar("default");
                         reference.setValue(user)
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
@@ -96,7 +98,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterActiv
                                 .addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
-                                        Snackbar.make(binding.layoutRegister, "Add user data failed", Snackbar.LENGTH_SHORT).show();
+                                        Toast.makeText(RegisterActivity.this, "Add user data failed", Toast.LENGTH_SHORT).show();
                                     }
                                 });
                     }
@@ -104,7 +106,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterActiv
                 .addOnFailureListener(this, new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Snackbar.make(binding.layoutRegister, "Register failed", Snackbar.LENGTH_SHORT).show();
+                        Toast.makeText(RegisterActivity.this, "Register failed", Toast.LENGTH_SHORT).show();
                     }
                 });
     }

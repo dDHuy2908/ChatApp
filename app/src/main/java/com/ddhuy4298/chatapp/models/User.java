@@ -2,7 +2,7 @@ package com.ddhuy4298.chatapp.models;
 
 public class User {
 
-    private String email, name, phone, password, id;
+    private String email, name, phone, password, id, avatar;
     private long lastedMessageTime;
 
     public long getLastedMessageTime() {
@@ -11,6 +11,14 @@ public class User {
 
     public void setLastedMessageTime(long lastedMessageTime) {
         this.lastedMessageTime = lastedMessageTime;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 
     public String getEmail() {

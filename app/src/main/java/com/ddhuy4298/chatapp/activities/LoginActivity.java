@@ -74,10 +74,6 @@ public class LoginActivity extends AppCompatActivity implements LoginActivityLis
                 .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(AuthResult authResult) {
-//                        DatabaseReference reference = FirebaseDatabase.getInstance()
-//                                .getReference("Users").child(firebaseAuth.getCurrentUser().getUid());
-//                        reference.child("token").setValue(FirebaseInstanceId.getInstance().getToken());
-
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                         startActivity(intent);
@@ -87,7 +83,7 @@ public class LoginActivity extends AppCompatActivity implements LoginActivityLis
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Snackbar.make(binding.layoutLogin, "Login failed", Snackbar.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivity.this, "Register failed", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -110,7 +106,7 @@ public class LoginActivity extends AppCompatActivity implements LoginActivityLis
                 binding.edtPassword.setText(password);
             }
             else if (resultCode == RESULT_CANCELED) {
-                Snackbar.make(binding.layoutLogin, "Canceled", Snackbar.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, "Cancelled", Toast.LENGTH_SHORT).show();
             }
         }
     }

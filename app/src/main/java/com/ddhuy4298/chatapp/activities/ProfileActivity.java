@@ -2,6 +2,8 @@ package com.ddhuy4298.chatapp.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Window;
+import android.view.WindowManager;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,6 +23,9 @@ public class ProfileActivity extends AppCompatActivity implements ProfileActivit
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Window window = getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(getResources().getColor(R.color.defaultBackgroundColor));
         binding = DataBindingUtil.setContentView(this, R.layout.activity_profile);
         binding.setListener(this);
     }

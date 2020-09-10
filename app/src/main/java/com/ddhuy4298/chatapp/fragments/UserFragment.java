@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.ddhuy4298.chatapp.R;
 import com.ddhuy4298.chatapp.activities.ChatActivity;
 import com.ddhuy4298.chatapp.activities.ProfileActivity;
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 public class UserFragment extends BaseFragment<FragmentUserBinding> implements UserListener, View.OnClickListener {
 
     private UserAdapter adapter;
+    private String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
     @Override
     protected int getLayoutId() {
@@ -76,7 +78,25 @@ public class UserFragment extends BaseFragment<FragmentUserBinding> implements U
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("");
         ((AppCompatActivity) getActivity()).getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         binding.toolbar.setNavigationIcon(null);
-        ImageView imageView = binding.toolbar.findViewById(R.id.avatar);
+        final ImageView imageView = binding.toolbar.findViewById(R.id.avatar);
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(userId);
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                if (user.getAvatar().equals("default")) {
+                    imageView.setImageResource(R.drawable.ic_avatar);
+                }
+                else {
+                    Glide.with(getActivity()).load(user.getAvatar()).into(imageView);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
         imageView.setOnClickListener(this);
     }
 

@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.ddhuy4298.chatapp.R;
 import com.ddhuy4298.chatapp.databinding.ItemChatBinding;
 import com.ddhuy4298.chatapp.listeners.UserListener;
@@ -121,7 +122,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatHolder> {
             e.printStackTrace();
         }
         if (diff == 86400000) {
-            return "Yest";
+            return "1 day";
         }
         else if (diff > 86400000) {
             return lastedTime1;
