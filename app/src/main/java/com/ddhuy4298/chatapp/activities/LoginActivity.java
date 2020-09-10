@@ -1,5 +1,6 @@
 package com.ddhuy4298.chatapp.activities;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import androidx.databinding.DataBindingUtil;
 import com.ddhuy4298.chatapp.listeners.LoginActivityListener;
 import com.ddhuy4298.chatapp.R;
 import com.ddhuy4298.chatapp.databinding.ActivityLoginBinding;
+import com.ddhuy4298.chatapp.utils.PermissionUtils;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
@@ -29,6 +31,10 @@ public class LoginActivity extends AppCompatActivity implements LoginActivityLis
     public static final int REQUEST_CODE = 1;
     private ActivityLoginBinding binding;
     private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    private final String[] PERMISSIONS = {
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,6 +45,27 @@ public class LoginActivity extends AppCompatActivity implements LoginActivityLis
         window.setStatusBarColor(getResources().getColor(R.color.login_bk_color));
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login);
 
+        if (PermissionUtils.checkPermission(this, PERMISSIONS)) {
+            init();
+        }
+        else {
+            PermissionUtils.requestPermissions(this, PERMISSIONS, 0);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        boolean result = PermissionUtils.checkPermission(this, PERMISSIONS);
+        if (result) {
+            init();
+        }
+        else {
+            finish();
+        }
+    }
+
+    private void init() {
         binding.setListener(this);
 
         if (firebaseAuth.getCurrentUser() != null) {
