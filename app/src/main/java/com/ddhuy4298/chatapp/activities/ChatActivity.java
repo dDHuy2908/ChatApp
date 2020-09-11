@@ -3,6 +3,8 @@ package com.ddhuy4298.chatapp.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -14,18 +16,18 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
+import com.bumptech.glide.Glide;
 import com.ddhuy4298.chatapp.R;
 import com.ddhuy4298.chatapp.adapters.MessageAdapter;
+import com.ddhuy4298.chatapp.databinding.ActivityChatBinding;
 import com.ddhuy4298.chatapp.listeners.ChatActivityListener;
 import com.ddhuy4298.chatapp.models.Message;
 import com.ddhuy4298.chatapp.models.User;
-import com.ddhuy4298.chatapp.databinding.ActivityChatBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -46,6 +48,28 @@ public class ChatActivity extends AppCompatActivity implements ChatActivityListe
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(getResources().getColor(R.color.defaultBackgroundColor));
         binding = DataBindingUtil.setContentView(this, R.layout.activity_chat);
+
+        binding.edtMessage.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.toString().length()<1){
+                    binding.layoutSend.setVisibility(View.GONE);
+                }
+                else {
+                    binding.layoutSend.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
 
         setupToolbar();
 
@@ -68,6 +92,13 @@ public class ChatActivity extends AppCompatActivity implements ChatActivityListe
         final String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         Intent intent = getIntent();
         final String receiverId = intent.getStringExtra("userId");
+        String receiverAvatar = intent.getStringExtra("userAvatar");
+        if (receiverAvatar.equals("default")) {
+            binding.avatar.setImageResource(R.drawable.ic_avatar);
+        } else {
+            Glide.with(binding.avatar).load(receiverAvatar).into(binding.avatar);
+        }
+        adapter.setReceiverAvatar(receiverAvatar);
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Messages");
         reference.addValueEventListener(new ValueEventListener() {
             @Override

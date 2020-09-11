@@ -25,8 +25,7 @@
             android:id="@+id/avatar"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_gravity="bottom"
-            android:src="@drawable/ic_avatar" />
+            android:layout_gravity="bottom" />
 
         <TextView
             android:id="@+id/tv_received_msg"
