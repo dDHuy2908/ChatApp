@@ -47,8 +47,7 @@
             android:layout_height="match_parent"
             android:layout_above="@id/input_message"
             android:layout_below="@+id/toolbar"
-            android:overScrollMode="never"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+            android:overScrollMode="never"/>
 
         <LinearLayout
             android:id="@+id/input_message"

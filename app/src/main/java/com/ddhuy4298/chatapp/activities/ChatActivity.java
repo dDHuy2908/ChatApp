@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.bumptech.glide.Glide;
 import com.ddhuy4298.chatapp.R;
@@ -76,17 +77,20 @@ public class ChatActivity extends AppCompatActivity implements ChatActivityListe
         setupMessageList();
     }
 
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (getCurrentFocus() != null) {
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-        }
-        return super.dispatchTouchEvent(ev);
-    }
+//    @Override
+//    public boolean dispatchTouchEvent(MotionEvent ev) {
+//        if (getCurrentFocus() != null) {
+//            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+//            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+//        }
+//        return super.dispatchTouchEvent(ev);
+//    }
 
     private void setupMessageList() {
         binding.setListener(this);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setStackFromEnd(true);
+        binding.rvMessage.setLayoutManager(layoutManager);
         adapter = new MessageAdapter(getLayoutInflater());
         binding.rvMessage.setAdapter(adapter);
         final String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -113,6 +117,7 @@ public class ChatActivity extends AppCompatActivity implements ChatActivityListe
                 }
                 adapter.setData(data);
                 adapter.notifyDataSetChanged();
+                binding.rvMessage.scrollToPosition(binding.rvMessage.getAdapter().getItemCount()-1);
             }
 
             @Override

@@ -69,6 +69,15 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageH
             case MESSAGE_SENDER:
                 holder.rightBinding.setItem(data.get(position));
                 holder.rightBinding.setListener(listener);
+                if (position == 0) {
+                    holder.rightBinding.tvTime.setVisibility(View.VISIBLE);
+                } else {
+                    if (checkTime(data.get(position).getId(), data.get(position - 1).getId()) > 300000) {
+                        holder.rightBinding.tvTime.setVisibility(View.VISIBLE);
+                    } else if (checkTime(data.get(position).getId(), data.get(position - 1).getId()) < 300000) {
+                        holder.rightBinding.tvTime.setVisibility(View.GONE);
+                    }
+                }
                 break;
             case MESSAGE_RECEIVER:
                 holder.leftBinding.setItem(data.get(position));
@@ -79,8 +88,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageH
                     } else {
                         Glide.with(holder.leftBinding.avatar).load(receiverAvatar).into(holder.leftBinding.avatar);
                     }
-                }
-                if (position == data.size() - 1) {
+                } else if (position == data.size() - 1) {
                     if (receiverAvatar.equals("default")) {
                         holder.leftBinding.avatar.setImageResource(R.drawable.ic_avatar);
                     } else {
@@ -88,6 +96,21 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageH
                     }
                 } else if (position < data.size() - 1 && position > 0 && data.get(position).getSender().equals(data.get(position + 1).getSender())) {
                     holder.leftBinding.avatar.setVisibility(View.INVISIBLE);
+                } else if (position < data.size() - 1 && position > 0 && !data.get(position).getSender().equals(data.get(position + 1).getSender())) {
+                    if (receiverAvatar.equals("default")) {
+                        holder.leftBinding.avatar.setImageResource(R.drawable.ic_avatar);
+                    } else {
+                        Glide.with(holder.leftBinding.avatar).load(receiverAvatar).into(holder.leftBinding.avatar);
+                    }
+                }
+                if (position == 0) {
+                    holder.leftBinding.tvTime.setVisibility(View.VISIBLE);
+                } else {
+                    if (checkTime(data.get(position).getId(), data.get(position - 1).getId()) > 300000) {
+                        holder.leftBinding.tvTime.setVisibility(View.VISIBLE);
+                    } else if (checkTime(data.get(position).getId(), data.get(position - 1).getId()) < 300000) {
+                        holder.leftBinding.tvTime.setVisibility(View.GONE);
+                    }
                 }
         }
     }
@@ -121,5 +144,37 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageH
             super(binding.getRoot());
             this.rightBinding = binding;
         }
+    }
+
+    private long checkTime(long time1, long time2) {
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+        String time1String = format.format(time1);
+        String time2String = format.format(time2);
+        long diff = 0;
+        try {
+            Date date1 = format.parse(time1String);
+            Date date2 = format.parse(time2String);
+            diff = date1.getTime() - date2.getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return diff;
+    }
+
+    private long checkDate(long time) {
+        SimpleDateFormat hourFormat = new SimpleDateFormat("HH:mm");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat dateFormat1 = new SimpleDateFormat("dd/MM");
+        String lastedTime = dateFormat.format(time);
+        String currentTime = dateFormat.format(System.currentTimeMillis());
+        long diff = 0;
+        try {
+            Date date1 = dateFormat.parse(lastedTime);
+            Date date2 = dateFormat.parse(currentTime);
+            diff = date2.getTime() - date1.getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return diff;
     }
 }
