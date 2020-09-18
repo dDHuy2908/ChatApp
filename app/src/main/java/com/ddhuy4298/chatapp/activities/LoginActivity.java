@@ -143,4 +143,9 @@ public class LoginActivity extends AppCompatActivity implements LoginActivityLis
             }
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
 }

@@ -138,7 +138,7 @@ public class UserFragment extends BaseFragment<FragmentUserBinding> implements U
                     imageView.setImageResource(R.drawable.ic_avatar);
                 }
                 else {
-                    Glide.with(getActivity()).load(user.getAvatar()).into(imageView);
+                    Glide.with(imageView).load(user.getAvatar()).into(imageView);
                 }
             }
 

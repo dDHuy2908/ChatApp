@@ -5,6 +5,15 @@ public class Message {
     private String sender;
     private String receiver;
     private String message;
+    private boolean isSeen;
+
+    public boolean isSeen() {
+        return isSeen;
+    }
+
+    public void setSeen(boolean seen) {
+        isSeen = seen;
+    }
 
     public long getId() {
         return id;

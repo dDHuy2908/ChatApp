@@ -1,5 +1,6 @@
 package com.ddhuy4298.chatapp.adapters;
 
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -96,6 +97,11 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatHolder> {
                             holder.binding.tvLatestMessage.setText("You: " + lastedMessage);
                             holder.binding.tvTime.setText(checkTime(message.getId()));
                         } else if (message.getSender().equals(receiverId)) {
+//                            if (message.isSeen()) {
+//                                holder.binding.tvLatestMessage.setTypeface(Typeface.DEFAULT);
+//                            } else {
+//                                holder.binding.tvLatestMessage.setTypeface(Typeface.DEFAULT_BOLD);
+//                            }
                             holder.binding.tvLatestMessage.setText(lastedMessage);
                             holder.binding.tvTime.setText(checkTime(message.getId()));
                         }

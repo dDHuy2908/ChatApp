@@ -95,6 +95,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterActiv
                                         intent.putExtra("password", password);
                                         setResult(RESULT_OK, intent);
                                         overridePendingTransition(R.anim.slide_in_left,android.R.anim.slide_out_right);
+                                        Toast.makeText(RegisterActivity.this, "Register successfully", Toast.LENGTH_SHORT).show();
                                         finish();
                                     }
                                 })

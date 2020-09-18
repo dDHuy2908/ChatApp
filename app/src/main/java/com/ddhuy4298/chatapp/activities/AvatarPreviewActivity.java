@@ -88,6 +88,7 @@ public class AvatarPreviewActivity extends AppCompatActivity implements AvatarPr
                             reference.child("avatar").setValue(downloadUrl.toString());
                             progressDialog.dismiss();
                             Toast.makeText(AvatarPreviewActivity.this, "Changed avatar!", Toast.LENGTH_SHORT).show();
+                            finish();
                         }
                     });
                 }

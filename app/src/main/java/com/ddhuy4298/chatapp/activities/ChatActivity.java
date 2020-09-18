@@ -3,8 +3,6 @@ package com.ddhuy4298.chatapp.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -42,6 +40,7 @@ public class ChatActivity extends AppCompatActivity implements ChatActivityListe
 
     private ActivityChatBinding binding;
     private MessageAdapter adapter;
+    private ValueEventListener eventListener;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -79,6 +78,8 @@ public class ChatActivity extends AppCompatActivity implements ChatActivityListe
         setupToolbar();
 
         setupMessageList();
+
+        seenMessage();
     }
 
     @Override
@@ -122,7 +123,7 @@ public class ChatActivity extends AppCompatActivity implements ChatActivityListe
                 adapter.setData(data);
                 adapter.notifyDataSetChanged();
                 if (binding.rvMessage.getAdapter().getItemCount() != 0) {
-                    binding.rvMessage.smoothScrollToPosition(binding.rvMessage.getAdapter().getItemCount()-1);
+                    binding.rvMessage.smoothScrollToPosition(binding.rvMessage.getAdapter().getItemCount() - 1);
                 }
             }
 
@@ -178,6 +179,7 @@ public class ChatActivity extends AppCompatActivity implements ChatActivityListe
         message.setSender(senderId);
         message.setReceiver(receiverId);
         message.setMessage(content);
+        message.setSeen(false);
         reference.child(message.getId() + "").setValue(message)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
@@ -231,6 +233,31 @@ public class ChatActivity extends AppCompatActivity implements ChatActivityListe
         });
     }
 
+    private void seenMessage() {
+        Intent intent = getIntent();
+        final String receiverId = intent.getStringExtra("userId");
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Messages");
+        eventListener = reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Message message = snapshot.getValue(Message.class);
+                    if (message.getReceiver().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                            && message.getSender().equals(receiverId)) {
+                        HashMap<String, Object> hashMap = new HashMap<>();
+                        hashMap.put("isSeen", true);
+                        snapshot.getRef().updateChildren(hashMap);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
     private void status(String status) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
@@ -248,6 +275,10 @@ public class ChatActivity extends AppCompatActivity implements ChatActivityListe
     @Override
     protected void onPause() {
         super.onPause();
+        Intent intent = getIntent();
+        final String receiverId = intent.getStringExtra("userId");
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(receiverId);
+        reference.removeEventListener(eventListener);
         status("offline");
     }
 }

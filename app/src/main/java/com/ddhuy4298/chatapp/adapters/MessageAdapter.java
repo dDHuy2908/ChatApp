@@ -94,6 +94,16 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageH
 //                    holder.rightBinding.tvTime.setVisibility(View.GONE);
 //                    holder.rightBinding.tvDate.setVisibility(View.GONE);
 //                }
+                if (position == data.size() - 1 && data.size() > 0) {
+                    holder.rightBinding.tvSeen.setVisibility(View.VISIBLE);
+                    if (data.get(position).isSeen()) {
+                        holder.rightBinding.tvSeen.setText("Seen");
+                    } else {
+                        holder.rightBinding.tvSeen.setText("Delivered");
+                    }
+                } else {
+                    holder.rightBinding.tvSeen.setVisibility(View.GONE);
+                }
                 break;
             case MESSAGE_RECEIVER:
                 holder.leftBinding.setItem(data.get(position));

@@ -24,10 +24,10 @@ public class SplashActivity extends AppCompatActivity {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    database.setPersistenceEnabled(true);
-                    DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-                    //reference.keepSynced(true);
+//                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+//                    database.setPersistenceEnabled(true);
+//                    DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+//                    reference.keepSynced(true);
                     Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
                     startActivity(intent);
                     finish();

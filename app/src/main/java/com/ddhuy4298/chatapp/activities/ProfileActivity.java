@@ -29,8 +29,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.HashMap;
-
 public class ProfileActivity extends AppCompatActivity implements ProfileActivityListener {
 
     private ActivityProfileBinding binding;
@@ -56,7 +54,7 @@ public class ProfileActivity extends AppCompatActivity implements ProfileActivit
                     binding.avatar.setImageResource(R.drawable.ic_avatar);
                 } else {
                     //Glide.with(binding.avatar).load(user.getAvatar()).into(binding.avatar);
-                    Glide.with(binding.avatar)
+                    Glide.with(getApplicationContext())
                             .asBitmap()
                             .load(user.getAvatar())
                             .centerCrop()
@@ -97,6 +95,8 @@ public class ProfileActivity extends AppCompatActivity implements ProfileActivit
             Intent intent = new Intent(ProfileActivity.this, LoginActivity.class)
                     .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
+            MainActivity.main.finish();
+//            finish();
             binding.btnLogout.setEnabled(false);
             binding.btnLogout.setClickable(false);
         }

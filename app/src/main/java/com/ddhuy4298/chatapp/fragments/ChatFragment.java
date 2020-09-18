@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
 import com.ddhuy4298.chatapp.R;
 import com.ddhuy4298.chatapp.activities.ChatActivity;
+import com.ddhuy4298.chatapp.activities.LoginActivity;
 import com.ddhuy4298.chatapp.activities.ProfileActivity;
 import com.ddhuy4298.chatapp.adapters.ChatAdapter;
 import com.ddhuy4298.chatapp.databinding.FragmentChatBinding;
@@ -30,6 +32,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+
+import static android.app.Activity.RESULT_OK;
 
 public class ChatFragment extends BaseFragment<FragmentChatBinding> implements UserListener, View.OnClickListener {
 
@@ -89,7 +93,7 @@ public class ChatFragment extends BaseFragment<FragmentChatBinding> implements U
                 if (user.getAvatar().equals("default")) {
                     imageView.setImageResource(R.drawable.ic_avatar);
                 } else {
-                    Glide.with(getActivity()).load(user.getAvatar()).into(imageView);
+                    Glide.with(imageView).load(user.getAvatar()).into(imageView);
                 }
             }
 
