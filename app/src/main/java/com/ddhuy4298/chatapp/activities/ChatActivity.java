@@ -245,7 +245,7 @@ public class ChatActivity extends AppCompatActivity implements ChatActivityListe
                     if (message.getReceiver().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())
                             && message.getSender().equals(receiverId)) {
                         HashMap<String, Object> hashMap = new HashMap<>();
-                        hashMap.put("isSeen", true);
+                        hashMap.put("seen", true);
                         snapshot.getRef().updateChildren(hashMap);
                     }
                 }

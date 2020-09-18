@@ -133,12 +133,15 @@ public class UserFragment extends BaseFragment<FragmentUserBinding> implements U
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (getActivity() == null) {
+                    return;
+                }
                 User user = dataSnapshot.getValue(User.class);
                 if (user.getAvatar().equals("default")) {
                     imageView.setImageResource(R.drawable.ic_avatar);
                 }
                 else {
-                    Glide.with(imageView).load(user.getAvatar()).into(imageView);
+                    Glide.with(getActivity().getApplicationContext()).load(user.getAvatar()).into(imageView);
                 }
             }
 

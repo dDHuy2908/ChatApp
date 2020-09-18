@@ -92,11 +92,11 @@ public class ProfileActivity extends AppCompatActivity implements ProfileActivit
     public void onLogOutClick() {
         if (clickable) {
             firebaseAuth.signOut();
-            Intent intent = new Intent(ProfileActivity.this, LoginActivity.class)
-                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
+//                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
             MainActivity.main.finish();
-//            finish();
+            finish();
             binding.btnLogout.setEnabled(false);
             binding.btnLogout.setClickable(false);
         }

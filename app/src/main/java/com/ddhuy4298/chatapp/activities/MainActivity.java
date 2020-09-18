@@ -16,6 +16,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
+import com.bumptech.glide.Glide;
 import com.ddhuy4298.chatapp.R;
 import com.ddhuy4298.chatapp.databinding.ActivityMainBinding;
 import com.ddhuy4298.chatapp.fragments.BaseFragment;
