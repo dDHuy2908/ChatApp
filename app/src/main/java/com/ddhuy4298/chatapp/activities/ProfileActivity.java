@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.Window;
@@ -18,22 +17,17 @@ import androidx.databinding.DataBindingUtil;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.ddhuy4298.chatapp.R;
 import com.ddhuy4298.chatapp.databinding.ActivityProfileBinding;
 import com.ddhuy4298.chatapp.listeners.ProfileActivityListener;
 import com.ddhuy4298.chatapp.models.User;
-import com.google.android.gms.auth.api.signin.internal.Storage;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.StorageTask;
 
 import java.util.HashMap;
 
@@ -60,8 +54,7 @@ public class ProfileActivity extends AppCompatActivity implements ProfileActivit
                 binding.tvUsername.setText(user.getName());
                 if (user.getAvatar().equals("default")) {
                     binding.avatar.setImageResource(R.drawable.ic_avatar);
-                }
-                else {
+                } else {
                     //Glide.with(binding.avatar).load(user.getAvatar()).into(binding.avatar);
                     Glide.with(binding.avatar)
                             .asBitmap()
@@ -117,28 +110,14 @@ public class ProfileActivity extends AppCompatActivity implements ProfileActivit
     }
 
     @Override
+    public void onResetPasswordClick() {
+        Intent intent = new Intent(ProfileActivity.this, ResetPasswordActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
     public void onBackPressed() {
         super.onBackPressed();
         finish();
-    }
-
-    private void status(String status) {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("status", status);
-        reference.updateChildren(hashMap);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        status("online");
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        status("offline");
     }
 }

@@ -54,6 +54,7 @@
             style="@style/viewParent.headerText.settingsTextIcon"
             android:layout_marginTop="10dp"
             android:text="Change Password"
+            android:onClick="@{v -> listener.onResetPasswordClick()}"
             app:drawableLeftCompat="@drawable/ic_edit_password" />
 
         <TextView
