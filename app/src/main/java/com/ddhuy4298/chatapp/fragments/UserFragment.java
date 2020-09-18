@@ -67,7 +67,7 @@ public class UserFragment extends BaseFragment<FragmentUserBinding> implements U
                 Query query = FirebaseDatabase.getInstance().getReference("Users")
                         .orderByChild("name")
                         .startAt(s.toString().toLowerCase())
-                        .endAt(s.toString().toLowerCase()+"\uf8ff");
+                        .endAt(s.toString().toLowerCase() + "\uf8ff");
                 query.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -139,8 +139,7 @@ public class UserFragment extends BaseFragment<FragmentUserBinding> implements U
                 User user = dataSnapshot.getValue(User.class);
                 if (user.getAvatar().equals("default")) {
                     imageView.setImageResource(R.drawable.ic_avatar);
-                }
-                else {
+                } else {
                     Glide.with(getActivity().getApplicationContext()).load(user.getAvatar()).into(imageView);
                 }
             }

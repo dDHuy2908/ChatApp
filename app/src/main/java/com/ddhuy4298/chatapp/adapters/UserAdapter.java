@@ -3,23 +3,19 @@ package com.ddhuy4298.chatapp.adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.ddhuy4298.chatapp.R;
+import com.ddhuy4298.chatapp.databinding.ItemUserBinding;
 import com.ddhuy4298.chatapp.listeners.UserListener;
 import com.ddhuy4298.chatapp.models.User;
-import com.ddhuy4298.chatapp.databinding.ItemUserBinding;
 
 import java.util.ArrayList;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-
-public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserHolder>{
+public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserHolder> {
 
     private ArrayList<User> data;
     private LayoutInflater inflater;
@@ -53,8 +49,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserHolder>{
         }
         if (data.get(position).getStatus().equals("online")) {
             holder.binding.status.setVisibility(View.VISIBLE);
-        }
-        else {
+        } else {
             holder.binding.status.setVisibility(View.GONE);
         }
     }

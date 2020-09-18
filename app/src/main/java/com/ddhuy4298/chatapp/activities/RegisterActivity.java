@@ -16,9 +16,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
 import com.ddhuy4298.chatapp.R;
+import com.ddhuy4298.chatapp.databinding.ActivityRegisterBinding;
 import com.ddhuy4298.chatapp.listeners.RegisterActivityListener;
 import com.ddhuy4298.chatapp.models.User;
-import com.ddhuy4298.chatapp.databinding.ActivityRegisterBinding;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
@@ -94,7 +94,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterActiv
                                         intent.putExtra("email", email);
                                         intent.putExtra("password", password);
                                         setResult(RESULT_OK, intent);
-                                        overridePendingTransition(R.anim.slide_in_left,android.R.anim.slide_out_right);
+                                        overridePendingTransition(R.anim.slide_in_left, android.R.anim.slide_out_right);
                                         Toast.makeText(RegisterActivity.this, "Register successfully", Toast.LENGTH_SHORT).show();
                                         finish();
                                     }
@@ -119,7 +119,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterActiv
     public void onBackClick() {
         Intent intent = new Intent();
         setResult(RESULT_CANCELED, intent);
-        overridePendingTransition(R.anim.slide_in_left,android.R.anim.slide_out_right);
+        overridePendingTransition(R.anim.slide_in_left, android.R.anim.slide_out_right);
         finish();
     }
 
@@ -127,7 +127,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterActiv
     public void onBackPressed() {
         Intent intent = new Intent();
         setResult(RESULT_CANCELED, intent);
-        overridePendingTransition(R.anim.slide_in_left,android.R.anim.slide_out_right);
+        overridePendingTransition(R.anim.slide_in_left, android.R.anim.slide_out_right);
         finish();
     }
 }

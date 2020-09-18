@@ -1,6 +1,5 @@
 package com.ddhuy4298.chatapp.adapters;
 
-import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

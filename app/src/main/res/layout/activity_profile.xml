@@ -46,15 +46,15 @@
             android:id="@+id/change_avatar"
             style="@style/viewParent.headerText.settingsTextIcon"
             android:layout_marginTop="10dp"
+            android:onClick="@{v -> listener.onChangeAvatarClick()}"
             android:text="Change avatar"
-            app:drawableStartCompat="@drawable/ic_edit_profile"
-            android:onClick="@{v -> listener.onChangeAvatarClick()}"/>
+            app:drawableStartCompat="@drawable/ic_edit_profile" />
 
         <TextView
             style="@style/viewParent.headerText.settingsTextIcon"
             android:layout_marginTop="10dp"
-            android:text="Change Password"
             android:onClick="@{v -> listener.onResetPasswordClick()}"
+            android:text="Change Password"
             app:drawableLeftCompat="@drawable/ic_edit_password" />
 
         <TextView

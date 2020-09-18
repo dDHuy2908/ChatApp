@@ -2,7 +2,6 @@ package com.ddhuy4298.chatapp.activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Window;
@@ -24,12 +23,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
-
-import id.zelory.compressor.Compressor;
 
 public class AvatarPreviewActivity extends AppCompatActivity implements AvatarPreviewActivityListener {
 

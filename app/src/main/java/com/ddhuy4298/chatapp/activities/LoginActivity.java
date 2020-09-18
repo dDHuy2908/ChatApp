@@ -16,13 +16,12 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
-import com.ddhuy4298.chatapp.listeners.LoginActivityListener;
 import com.ddhuy4298.chatapp.R;
 import com.ddhuy4298.chatapp.databinding.ActivityLoginBinding;
+import com.ddhuy4298.chatapp.listeners.LoginActivityListener;
 import com.ddhuy4298.chatapp.utils.PermissionUtils;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -47,8 +46,7 @@ public class LoginActivity extends AppCompatActivity implements LoginActivityLis
 
         if (PermissionUtils.checkPermission(this, PERMISSIONS)) {
             init();
-        }
-        else {
+        } else {
             PermissionUtils.requestPermissions(this, PERMISSIONS, 0);
         }
     }
@@ -59,8 +57,7 @@ public class LoginActivity extends AppCompatActivity implements LoginActivityLis
         boolean result = PermissionUtils.checkPermission(this, PERMISSIONS);
         if (result) {
             init();
-        }
-        else {
+        } else {
             finish();
         }
     }
@@ -137,8 +134,7 @@ public class LoginActivity extends AppCompatActivity implements LoginActivityLis
                 String password = data.getStringExtra("password");
                 binding.edtEmail.setText(email);
                 binding.edtPassword.setText(password);
-            }
-            else if (resultCode == RESULT_CANCELED) {
+            } else if (resultCode == RESULT_CANCELED) {
                 Toast.makeText(LoginActivity.this, "Cancelled", Toast.LENGTH_SHORT).show();
             }
         }

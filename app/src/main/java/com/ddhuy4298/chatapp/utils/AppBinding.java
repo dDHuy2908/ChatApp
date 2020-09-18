@@ -17,8 +17,7 @@ public class AppBinding {
     public static void setAvatar(CircleImageView im, String avatarUrl) {
         if (avatarUrl.equals("default")) {
             im.setImageResource(R.drawable.ic_avatar);
-        }
-        else {
+        } else {
             Glide.with(im.getContext()).load(avatarUrl).into(im);
         }
     }
