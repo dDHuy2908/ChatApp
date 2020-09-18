@@ -83,6 +83,9 @@ public class RegisterActivity extends AppCompatActivity implements RegisterActiv
                         user.setPhone(phone);
                         user.setId(userId);
                         user.setAvatar("default");
+                        user.setStatus("offline");
+                        user.setLastedMessageTime(0);
+                        user.setSearchName(name.toLowerCase());
                         reference.setValue(user)
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override

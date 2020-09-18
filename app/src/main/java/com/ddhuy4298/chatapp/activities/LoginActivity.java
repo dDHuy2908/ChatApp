@@ -123,6 +123,12 @@ public class LoginActivity extends AppCompatActivity implements LoginActivityLis
     }
 
     @Override
+    public void onForgetPasswordClick() {
+        Intent intent = new Intent(LoginActivity.this, ResetPasswordActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE) {

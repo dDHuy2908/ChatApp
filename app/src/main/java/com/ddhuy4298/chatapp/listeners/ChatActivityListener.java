@@ -4,5 +4,4 @@ import com.ddhuy4298.chatapp.models.Message;
 
 public interface ChatActivityListener {
     void onSendClick();
-    void onMessageClick(Message message);
 }

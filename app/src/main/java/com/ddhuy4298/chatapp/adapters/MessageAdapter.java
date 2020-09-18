@@ -3,6 +3,7 @@ package com.ddhuy4298.chatapp.adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
@@ -70,19 +71,40 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageH
                 holder.rightBinding.setItem(data.get(position));
                 holder.rightBinding.setListener(listener);
                 if (position == 0) {
-                    holder.rightBinding.tvTime.setVisibility(View.VISIBLE);
+                    holder.rightBinding.tvTime.setVisibility(View.GONE);
+                    holder.rightBinding.tvDate.setVisibility(View.VISIBLE);
                 } else {
                     if (checkTime(data.get(position).getId(), data.get(position - 1).getId()) > 300000) {
                         holder.rightBinding.tvTime.setVisibility(View.VISIBLE);
+                        holder.rightBinding.tvDate.setVisibility(View.GONE);
                     } else if (checkTime(data.get(position).getId(), data.get(position - 1).getId()) < 300000) {
                         holder.rightBinding.tvTime.setVisibility(View.GONE);
+                        holder.rightBinding.tvDate.setVisibility(View.GONE);
                     }
                 }
+//                else if (checkDate(data.get(position).getId())) {
+//                    if (checkTime(data.get(position).getId(), data.get(position - 1).getId()) > 300000) {
+//                        holder.rightBinding.tvTime.setVisibility(View.VISIBLE);
+//                        holder.rightBinding.tvDate.setVisibility(View.GONE);
+//                    } else if (checkTime(data.get(position).getId(), data.get(position - 1).getId()) < 300000) {
+//                        holder.rightBinding.tvTime.setVisibility(View.GONE);
+//                        holder.rightBinding.tvDate.setVisibility(View.GONE);
+//                    }
+//                } else if (!checkDate(data.get(position).getId())){
+//                    holder.rightBinding.tvTime.setVisibility(View.GONE);
+//                    holder.rightBinding.tvDate.setVisibility(View.GONE);
+//                }
                 break;
             case MESSAGE_RECEIVER:
                 holder.leftBinding.setItem(data.get(position));
                 holder.leftBinding.setListener(listener);
-                if (!data.get(0).getSender().equals(data.get(1).getSender())) {
+                if (data.size() == 1) {
+                    if (receiverAvatar.equals("default")) {
+                        holder.leftBinding.avatar.setImageResource(R.drawable.ic_avatar);
+                    } else {
+                        Glide.with(holder.leftBinding.avatar).load(receiverAvatar).into(holder.leftBinding.avatar);
+                    }
+                } else if (!data.get(0).getSender().equals(data.get(1).getSender())) {
                     if (receiverAvatar.equals("default")) {
                         holder.leftBinding.avatar.setImageResource(R.drawable.ic_avatar);
                     } else {
@@ -104,14 +126,30 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageH
                     }
                 }
                 if (position == 0) {
-                    holder.leftBinding.tvTime.setVisibility(View.VISIBLE);
+                    holder.leftBinding.tvTime.setVisibility(View.GONE);
+                    holder.leftBinding.tvDate.setVisibility(View.VISIBLE);
                 } else {
                     if (checkTime(data.get(position).getId(), data.get(position - 1).getId()) > 300000) {
                         holder.leftBinding.tvTime.setVisibility(View.VISIBLE);
+                        holder.leftBinding.tvDate.setVisibility(View.GONE);
                     } else if (checkTime(data.get(position).getId(), data.get(position - 1).getId()) < 300000) {
                         holder.leftBinding.tvTime.setVisibility(View.GONE);
+                        holder.leftBinding.tvDate.setVisibility(View.GONE);
                     }
                 }
+//                else if (checkDate(data.get(position).getId())) {
+//                    if (checkTime(data.get(position).getId(), data.get(position - 1).getId()) > 300000) {
+//                        holder.leftBinding.tvTime.setVisibility(View.VISIBLE);
+//                        holder.leftBinding.tvDate.setVisibility(View.GONE);
+//                    } else if (checkTime(data.get(position).getId(), data.get(position - 1).getId()) < 300000) {
+//                        holder.leftBinding.tvTime.setVisibility(View.GONE);
+//                        holder.leftBinding.tvDate.setVisibility(View.GONE);
+//                    }
+//                } else if (!checkDate(data.get(position).getId())) {
+//                    holder.leftBinding.tvTime.setVisibility(View.GONE);
+//                    holder.leftBinding.tvDate.setVisibility(View.GONE);
+//                }
+                break;
         }
     }
 
@@ -135,14 +173,51 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageH
         private ItemMessageLeftBinding leftBinding;
         private ItemMessageRightBinding rightBinding;
 
-        public MessageHolder(@NonNull ItemMessageLeftBinding binding) {
+        public MessageHolder(@NonNull final ItemMessageLeftBinding binding) {
             super(binding.getRoot());
             this.leftBinding = binding;
+
+            leftBinding.tvReceivedMsg.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (leftBinding.tvTime.getVisibility() == View.GONE) {
+                        leftBinding.tvTime.setVisibility(View.VISIBLE);
+                    } else if (leftBinding.tvTime.getVisibility() == View.VISIBLE) {
+                        leftBinding.tvTime.setVisibility(View.GONE);
+                    }
+                }
+            });
+
+            leftBinding.tvReceivedMsg.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    Toast.makeText(v.getContext(), data.get(getAdapterPosition()).getMessage(), Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+            });
         }
 
         public MessageHolder(@NonNull ItemMessageRightBinding binding) {
             super(binding.getRoot());
             this.rightBinding = binding;
+
+            rightBinding.tvMessage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (rightBinding.tvTime.getVisibility() == View.GONE) {
+                        rightBinding.tvTime.setVisibility(View.VISIBLE);
+                    } else if (rightBinding.tvTime.getVisibility() == View.VISIBLE) {
+                        rightBinding.tvTime.setVisibility(View.GONE);
+                    }
+                }
+            });
+            rightBinding.tvMessage.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    Toast.makeText(v.getContext(), data.get(getAdapterPosition()).getMessage(), Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+            });
         }
     }
 
@@ -161,10 +236,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageH
         return diff;
     }
 
-    private long checkDate(long time) {
-        SimpleDateFormat hourFormat = new SimpleDateFormat("HH:mm");
+    private boolean checkDate(long time) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        SimpleDateFormat dateFormat1 = new SimpleDateFormat("dd/MM");
         String lastedTime = dateFormat.format(time);
         String currentTime = dateFormat.format(System.currentTimeMillis());
         long diff = 0;
@@ -175,6 +248,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageH
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return diff;
+        return diff == 0;
     }
 }

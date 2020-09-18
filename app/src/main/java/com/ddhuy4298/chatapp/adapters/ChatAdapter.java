@@ -1,13 +1,13 @@
 package com.ddhuy4298.chatapp.adapters;
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.ddhuy4298.chatapp.R;
 import com.ddhuy4298.chatapp.databinding.ItemChatBinding;
 import com.ddhuy4298.chatapp.listeners.UserListener;
@@ -60,6 +60,11 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatHolder> {
         if (listener != null) {
             holder.binding.setListener(listener);
         }
+        if (data.get(position).getStatus().equals("online")) {
+            holder.binding.status.setVisibility(View.VISIBLE);
+        } else {
+            holder.binding.status.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -90,8 +95,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatHolder> {
                         if (message.getSender().equals(currentUserId)) {
                             holder.binding.tvLatestMessage.setText("You: " + lastedMessage);
                             holder.binding.tvTime.setText(checkTime(message.getId()));
-                        }
-                        else if (message.getSender().equals(receiverId)) {
+                        } else if (message.getSender().equals(receiverId)) {
                             holder.binding.tvLatestMessage.setText(lastedMessage);
                             holder.binding.tvTime.setText(checkTime(message.getId()));
                         }
@@ -123,11 +127,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatHolder> {
         }
         if (diff == 86400000) {
             return "1 day";
-        }
-        else if (diff > 86400000) {
+        } else if (diff > 86400000) {
             return lastedTime1;
-        }
-        else {
+        } else {
             return hourFormat.format(time);
         }
     }

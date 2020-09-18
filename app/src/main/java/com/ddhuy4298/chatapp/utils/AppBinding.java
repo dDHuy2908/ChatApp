@@ -28,4 +28,10 @@ public class AppBinding {
         SimpleDateFormat format = new SimpleDateFormat("HH:mm");
         tv.setText(format.format(time));
     }
+
+    @BindingAdapter("date")
+    public static void setDate(TextView tv, long time) {
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        tv.setText(format.format(time));
+    }
 }

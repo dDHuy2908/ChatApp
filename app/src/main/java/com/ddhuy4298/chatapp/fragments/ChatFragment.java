@@ -2,6 +2,7 @@ package com.ddhuy4298.chatapp.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -87,8 +88,7 @@ public class ChatFragment extends BaseFragment<FragmentChatBinding> implements U
                 User user = dataSnapshot.getValue(User.class);
                 if (user.getAvatar().equals("default")) {
                     imageView.setImageResource(R.drawable.ic_avatar);
-                }
-                else {
+                } else {
                     Glide.with(getActivity()).load(user.getAvatar()).into(imageView);
                 }
             }
@@ -102,27 +102,34 @@ public class ChatFragment extends BaseFragment<FragmentChatBinding> implements U
     }
 
     private void getChattedList(final ArrayList<Chatted> chattedList) {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
+        final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 ArrayList<User> data = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     User user = snapshot.getValue(User.class);
+                    Log.e("Test user order", user.getName());
                     for (Chatted chatted : chattedList) {
                         if (user.getId().equals(chatted.getId())) {
                             data.add(user);
+                            //reference.child(user.getId()).child("lastedMessageTime").setValue(chatted.getLastedMessageTime());
                         }
                     }
                 }
-                Collections.sort(data, new Comparator<User>() {
-                    @Override
-                    public int compare(User o1, User o2) {
-                        return o1.getLastedMessageTime() > o2.getLastedMessageTime() ? -1 : 1;
-                    }
-                });
+//                Collections.sort(data, new Comparator<User>() {
+//                    @Override
+//                    public int compare(User o1, User o2) {
+//                        return o1.getLastedMessageTime() > o2.getLastedMessageTime() ? -1 : 1;
+//                    }
+//                });
                 adapter.setData(data);
                 adapter.notifyDataSetChanged();
+                if (data.size() == 0) {
+                    binding.tvNoMessage.setVisibility(View.VISIBLE);
+                } else {
+                    binding.tvNoMessage.setVisibility(View.GONE);
+                }
             }
 
             @Override

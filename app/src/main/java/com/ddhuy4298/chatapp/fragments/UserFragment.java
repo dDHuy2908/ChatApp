@@ -2,6 +2,9 @@ package com.ddhuy4298.chatapp.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -23,6 +26,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -40,28 +44,75 @@ public class UserFragment extends BaseFragment<FragmentUserBinding> implements U
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        adapter = new UserAdapter(getLayoutInflater());
+        binding.rvUser.setAdapter(adapter);
+        adapter.setListener(this);
 
         setupToolbar();
 
         showUsers();
+
+        searchUser();
+    }
+
+    private void searchUser() {
+        binding.edtUserSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Query query = FirebaseDatabase.getInstance().getReference("Users")
+                        .orderByChild("name")
+                        .startAt(s.toString().toLowerCase())
+                        .endAt(s.toString().toLowerCase()+"\uf8ff");
+                query.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        ArrayList<User> data = new ArrayList<>();
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            User user = snapshot.getValue(User.class);
+                            if (!user.getId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                                data.add(user);
+                            }
+                        }
+                        adapter.setData(data);
+                        adapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
 
     private void showUsers() {
-        adapter = new UserAdapter(getLayoutInflater());
-        binding.rvUser.setAdapter(adapter);
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                ArrayList<User> data = new ArrayList<>();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    User user = snapshot.getValue(User.class);
-                    if (!user.getId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
-                        data.add(user);
+                if (binding.edtUserSearch.getText().toString().equals("")) {
+                    ArrayList<User> data = new ArrayList<>();
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        User user = snapshot.getValue(User.class);
+                        if (!user.getId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                            data.add(user);
+                            Log.e("Test user", user.getName());
+                        }
                     }
+                    adapter.setData(data);
+                    adapter.notifyDataSetChanged();
                 }
-                adapter.setData(data);
-                adapter.notifyDataSetChanged();
             }
 
             @Override
@@ -69,7 +120,6 @@ public class UserFragment extends BaseFragment<FragmentUserBinding> implements U
 
             }
         });
-        adapter.setListener(this);
     }
 
     private void setupToolbar() {
@@ -104,6 +154,7 @@ public class UserFragment extends BaseFragment<FragmentUserBinding> implements U
     public void onUserClick(User user) {
         Intent intent = new Intent(getContext(), ChatActivity.class);
         intent.putExtra("userId", user.getId());
+        intent.putExtra("userAvatar", user.getAvatar());
         startActivity(intent);
     }
 

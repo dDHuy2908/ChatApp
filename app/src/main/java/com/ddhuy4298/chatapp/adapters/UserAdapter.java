@@ -1,6 +1,7 @@
 package com.ddhuy4298.chatapp.adapters;
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
@@ -49,6 +50,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserHolder>{
         holder.binding.setItem(data.get(position));
         if (listener != null) {
             holder.binding.setListener(listener);
+        }
+        if (data.get(position).getStatus().equals("online")) {
+            holder.binding.status.setVisibility(View.VISIBLE);
+        }
+        else {
+            holder.binding.status.setVisibility(View.GONE);
         }
     }
 

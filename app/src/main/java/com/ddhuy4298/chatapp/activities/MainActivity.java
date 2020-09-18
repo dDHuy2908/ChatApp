@@ -21,8 +21,12 @@ import com.ddhuy4298.chatapp.fragments.BaseFragment;
 import com.ddhuy4298.chatapp.fragments.ChatFragment;
 import com.ddhuy4298.chatapp.fragments.UserFragment;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.luseen.spacenavigation.SpaceItem;
 import com.luseen.spacenavigation.SpaceOnClickListener;
+
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -103,5 +107,25 @@ public class MainActivity extends AppCompatActivity {
         transaction.hide(fmUser);
         transaction.show(fmShow);
         transaction.commit();
+    }
+
+    private void status(String status) {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("status", status);
+        reference.updateChildren(hashMap);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        status("online");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        status("offline");
     }
 }

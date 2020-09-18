@@ -1,13 +1,12 @@
 package com.ddhuy4298.chatapp.activities;
 
 import android.app.ProgressDialog;
-import android.content.ContentResolver;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
-import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -23,15 +22,20 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+
+import id.zelory.compressor.Compressor;
 
 public class AvatarPreviewActivity extends AppCompatActivity implements AvatarPreviewActivityListener {
 
     private ActivityAvatarPreviewBinding binding;
     private static final int REQUEST_IMAGE = 1;
     private Uri avatarUri;
-    private StorageTask uploadTask;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -83,6 +87,7 @@ public class AvatarPreviewActivity extends AppCompatActivity implements AvatarPr
                             DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
                             reference.child("avatar").setValue(downloadUrl.toString());
                             progressDialog.dismiss();
+                            Toast.makeText(AvatarPreviewActivity.this, "Changed avatar!", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -96,5 +101,25 @@ public class AvatarPreviewActivity extends AppCompatActivity implements AvatarPr
     public void onBackPressed() {
         super.onBackPressed();
         finish();
+    }
+
+    private void status(String status) {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("status", status);
+        reference.updateChildren(hashMap);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        status("online");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        status("offline");
     }
 }

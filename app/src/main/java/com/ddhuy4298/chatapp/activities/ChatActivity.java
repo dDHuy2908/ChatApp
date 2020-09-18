@@ -36,6 +36,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ChatActivity extends AppCompatActivity implements ChatActivityListener {
 
@@ -50,41 +51,44 @@ public class ChatActivity extends AppCompatActivity implements ChatActivityListe
         window.setStatusBarColor(getResources().getColor(R.color.defaultBackgroundColor));
         binding = DataBindingUtil.setContentView(this, R.layout.activity_chat);
 
-        binding.edtMessage.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.toString().length()<1){
-                    binding.layoutSend.setVisibility(View.GONE);
-                }
-                else {
-                    binding.layoutSend.setVisibility(View.VISIBLE);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
+        /**
+         * Only show send button when editText.length() >= 1
+         * **/
+//        binding.edtMessage.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                if (s.toString().length()<1){
+//                    binding.layoutSend.setVisibility(View.GONE);
+//                }
+//                else {
+//                    binding.layoutSend.setVisibility(View.VISIBLE);
+//                }
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//
+//            }
+//        });
 
         setupToolbar();
 
         setupMessageList();
     }
 
-//    @Override
-//    public boolean dispatchTouchEvent(MotionEvent ev) {
-//        if (getCurrentFocus() != null) {
-//            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-//            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-//        }
-//        return super.dispatchTouchEvent(ev);
-//    }
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (getCurrentFocus() != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }
+        return super.dispatchTouchEvent(ev);
+    }
 
     private void setupMessageList() {
         binding.setListener(this);
@@ -117,7 +121,9 @@ public class ChatActivity extends AppCompatActivity implements ChatActivityListe
                 }
                 adapter.setData(data);
                 adapter.notifyDataSetChanged();
-                binding.rvMessage.scrollToPosition(binding.rvMessage.getAdapter().getItemCount()-1);
+                if (binding.rvMessage.getAdapter().getItemCount() != 0) {
+                    binding.rvMessage.smoothScrollToPosition(binding.rvMessage.getAdapter().getItemCount()-1);
+                }
             }
 
             @Override
@@ -168,7 +174,7 @@ public class ChatActivity extends AppCompatActivity implements ChatActivityListe
         if (content.isEmpty() || content.trim().isEmpty()) {
             return;
         }
-        Message message = new Message();
+        final Message message = new Message();
         message.setSender(senderId);
         message.setReceiver(receiverId);
         message.setMessage(content);
@@ -186,17 +192,18 @@ public class ChatActivity extends AppCompatActivity implements ChatActivityListe
                     }
                 });
 
-        DatabaseReference userReference = FirebaseDatabase.getInstance().getReference("Users").child(senderId);
-        userReference.child("lastedMessageTime").setValue(System.currentTimeMillis());
+//        DatabaseReference userReference = FirebaseDatabase.getInstance().getReference("Users").child(senderId);
+//        userReference.child("lastedMessageTime").setValue(System.currentTimeMillis());
 
-        final DatabaseReference chatReference = FirebaseDatabase.getInstance().getReference("Chatted")
+        final DatabaseReference chattedReference1 = FirebaseDatabase.getInstance().getReference("Chatted")
                 .child(senderId)
                 .child(receiverId);
-        chatReference.addListenerForSingleValueEvent(new ValueEventListener() {
+        chattedReference1.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                chattedReference1.child("lastedMessageTime").setValue(message.getId());
                 if (!dataSnapshot.exists()) {
-                    chatReference.child("id").setValue(receiverId);
+                    chattedReference1.child("id").setValue(receiverId);
                 }
             }
 
@@ -205,14 +212,15 @@ public class ChatActivity extends AppCompatActivity implements ChatActivityListe
 
             }
         });
-        final DatabaseReference chatReference1 = FirebaseDatabase.getInstance().getReference("Chatted")
+        final DatabaseReference chattedReference2 = FirebaseDatabase.getInstance().getReference("Chatted")
                 .child(receiverId)
                 .child(senderId);
-        chatReference1.addListenerForSingleValueEvent(new ValueEventListener() {
+        chattedReference2.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                chattedReference2.child("lastedMessageTime").setValue(message.getId());
                 if (!dataSnapshot.exists()) {
-                    chatReference1.child("id").setValue(senderId);
+                    chattedReference2.child("id").setValue(senderId);
                 }
             }
 
@@ -223,8 +231,23 @@ public class ChatActivity extends AppCompatActivity implements ChatActivityListe
         });
     }
 
+    private void status(String status) {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("status", status);
+        reference.updateChildren(hashMap);
+    }
+
     @Override
-    public void onMessageClick(Message message) {
-        Snackbar.make(binding.layoutChat, "Clicked", Snackbar.LENGTH_SHORT).show();
+    protected void onResume() {
+        super.onResume();
+        status("online");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        status("offline");
     }
 }

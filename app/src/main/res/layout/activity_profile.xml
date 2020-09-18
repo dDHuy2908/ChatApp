@@ -34,7 +34,6 @@
                 style="@style/viewParent.headerText"
                 android:layout_marginTop="5dp"
                 android:layout_toEndOf="@id/avatar"
-                android:text="dDHuy_Bobe"
                 android:textSize="20sp" />
 
         </LinearLayout>

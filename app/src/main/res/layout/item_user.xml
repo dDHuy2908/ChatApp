@@ -12,7 +12,7 @@
             type="com.ddhuy4298.chatapp.listeners.UserListener" />
     </data>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -22,8 +22,7 @@
         android:background="@drawable/user_shape"
         android:elevation="2dp"
         android:gravity="center_vertical"
-        android:onClick="@{v->listener.onUserClick(item)}"
-        android:orientation="horizontal">
+        android:onClick="@{v->listener.onUserClick(item)}">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/avatar"
@@ -32,17 +31,30 @@
             android:layout_height="56dp"
             android:paddingStart="6dp"
             android:paddingTop="6dp"
-            android:paddingBottom="6dp"/>
+            android:paddingBottom="6dp" />
 
         <TextView
             android:id="@+id/tv_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="12dp"
-            android:paddingRight="16dp"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/avatar"
+            android:paddingStart="12dp"
+            android:paddingEnd="16dp"
             android:text="@{item.name}"
             android:textSize="18sp"
             android:textStyle="bold" />
 
-    </LinearLayout>
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/status"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:layout_alignEnd="@+id/avatar"
+            android:layout_alignBottom="@+id/avatar"
+            android:layout_margin="5dp"
+            android:src="@color/colorAccent"
+            android:visibility="gone" />
+
+
+    </RelativeLayout>
 </layout>

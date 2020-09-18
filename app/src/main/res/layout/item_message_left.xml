@@ -17,12 +17,26 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tv_time"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            time="@{item.id}" />
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_time"
+                time="@{item.id}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true" />
+
+            <TextView
+                android:id="@+id/tv_date"
+                date="@{item.id}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true" />
+
+        </RelativeLayout>
 
         <LinearLayout
             android:layout_width="300dp"
@@ -38,6 +52,23 @@
                 android:layout_height="30dp"
                 android:layout_gravity="bottom" />
 
+            <!--            <TextView-->
+            <!--                android:id="@+id/tv_received_msg"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_marginStart="6dp"-->
+            <!--                android:layout_marginBottom="2dp"-->
+            <!--                android:background="@drawable/message_left"-->
+            <!--                android:elevation="2dp"-->
+            <!--                android:justificationMode="inter_word"-->
+            <!--                android:onClick="@{v -> listener.onMessageClick(item)}"-->
+            <!--                android:paddingStart="12dp"-->
+            <!--                android:paddingTop="8dp"-->
+            <!--                android:paddingEnd="12dp"-->
+            <!--                android:paddingBottom="6dp"-->
+            <!--                android:text="@{item.message}"-->
+            <!--                android:textSize="17sp" />-->
+
             <TextView
                 android:id="@+id/tv_received_msg"
                 android:layout_width="wrap_content"
@@ -47,7 +78,7 @@
                 android:background="@drawable/message_left"
                 android:elevation="2dp"
                 android:justificationMode="inter_word"
-                android:onClick="@{v -> listener.onMessageClick(item)}"
+                android:longClickable="true"
                 android:paddingStart="12dp"
                 android:paddingTop="8dp"
                 android:paddingEnd="12dp"

@@ -12,7 +12,7 @@
             type="com.ddhuy4298.chatapp.listeners.UserListener" />
     </data>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -34,7 +34,18 @@
             android:paddingTop="6dp"
             android:paddingBottom="6dp" />
 
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/status"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_alignEnd="@+id/avatar"
+            android:layout_alignBottom="@+id/avatar"
+            android:layout_margin="5dp"
+            android:src="@color/colorAccent"
+            android:visibility="gone" />
+
         <LinearLayout
+            android:layout_toEndOf="@id/avatar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -81,5 +92,5 @@
 
         </LinearLayout>
 
-    </LinearLayout>
+    </RelativeLayout>
 </layout>

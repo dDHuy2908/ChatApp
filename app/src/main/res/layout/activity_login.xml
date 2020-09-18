@@ -96,6 +96,7 @@
                     android:layout_marginTop="10dp"
                     android:text="Forgot Password?"
                     android:textColor="#11cfc5"
+                    android:onClick="@{v -> listener.onForgetPasswordClick()}"
                     android:textSize="12sp" />
 
                 <Button

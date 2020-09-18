@@ -2,6 +2,8 @@ package com.ddhuy4298.chatapp.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -15,6 +17,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.ddhuy4298.chatapp.R;
 import com.ddhuy4298.chatapp.databinding.ActivityProfileBinding;
 import com.ddhuy4298.chatapp.listeners.ProfileActivityListener;
@@ -29,6 +34,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
+
+import java.util.HashMap;
 
 public class ProfileActivity extends AppCompatActivity implements ProfileActivityListener {
 
@@ -50,11 +57,27 @@ public class ProfileActivity extends AppCompatActivity implements ProfileActivit
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user = snapshot.getValue(User.class);
+                binding.tvUsername.setText(user.getName());
                 if (user.getAvatar().equals("default")) {
                     binding.avatar.setImageResource(R.drawable.ic_avatar);
                 }
                 else {
-                    Glide.with(binding.avatar).load(user.getAvatar()).into(binding.avatar);
+                    //Glide.with(binding.avatar).load(user.getAvatar()).into(binding.avatar);
+                    Glide.with(binding.avatar)
+                            .asBitmap()
+                            .load(user.getAvatar())
+                            .centerCrop()
+                            .into(new CustomTarget<Bitmap>() {
+                                @Override
+                                public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                    binding.avatar.setImageBitmap(resource);
+                                }
+
+                                @Override
+                                public void onLoadCleared(@Nullable Drawable placeholder) {
+
+                                }
+                            });
                 }
             }
 
@@ -78,9 +101,9 @@ public class ProfileActivity extends AppCompatActivity implements ProfileActivit
     public void onLogOutClick() {
         if (clickable) {
             firebaseAuth.signOut();
-            Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
+            Intent intent = new Intent(ProfileActivity.this, LoginActivity.class)
+                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
-            finish();
             binding.btnLogout.setEnabled(false);
             binding.btnLogout.setClickable(false);
         }
@@ -97,5 +120,25 @@ public class ProfileActivity extends AppCompatActivity implements ProfileActivit
     public void onBackPressed() {
         super.onBackPressed();
         finish();
+    }
+
+    private void status(String status) {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("status", status);
+        reference.updateChildren(hashMap);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        status("online");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        status("offline");
     }
 }
