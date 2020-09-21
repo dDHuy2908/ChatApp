@@ -4,4 +4,5 @@ public interface ProfileActivityListener {
     void onLogOutClick();
     void onChangeAvatarClick();
     void onResetPasswordClick();
+    void onLanguageClick();
 }

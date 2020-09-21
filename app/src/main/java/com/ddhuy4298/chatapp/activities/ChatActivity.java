@@ -3,11 +3,13 @@ package com.ddhuy4298.chatapp.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,8 +20,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.bumptech.glide.Glide;
 import com.ddhuy4298.chatapp.R;
 import com.ddhuy4298.chatapp.adapters.MessageAdapter;
+import com.ddhuy4298.chatapp.api.ApiBuilder;
 import com.ddhuy4298.chatapp.databinding.ActivityChatBinding;
 import com.ddhuy4298.chatapp.listeners.ChatActivityListener;
+import com.ddhuy4298.chatapp.models.Data;
+import com.ddhuy4298.chatapp.models.FCM;
 import com.ddhuy4298.chatapp.models.Message;
 import com.ddhuy4298.chatapp.models.User;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -35,6 +40,11 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ChatActivity extends AppCompatActivity implements ChatActivityListener {
 
@@ -231,6 +241,49 @@ public class ChatActivity extends AppCompatActivity implements ChatActivityListe
 
             }
         });
+
+        final String[] userToken = {""};
+        DatabaseReference tokenReference = FirebaseDatabase.getInstance()
+                .getReference("Users")
+                .child(receiverId)
+                .child("token");
+        tokenReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                userToken[0] = snapshot.getValue(String.class);
+                Log.e("userToken", userToken[0]);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        Data data = new Data();
+        data.setTitle(senderId);
+        data.setBody(content);
+        FCM fcm = new FCM();
+        fcm.setTo(userToken[0]);
+        fcm.setData(data);
+
+        ApiBuilder.getInstance()
+                .sendNotification(fcm)
+                .enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if (response.code() == 200) {
+                            Toast.makeText(ChatActivity.this, "Success", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(ChatActivity.this, "Failed", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                    }
+                });
     }
 
     private void seenMessage() {

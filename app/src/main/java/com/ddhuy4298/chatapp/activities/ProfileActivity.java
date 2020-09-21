@@ -5,10 +5,12 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,8 +21,11 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.ddhuy4298.chatapp.R;
+import com.ddhuy4298.chatapp.api.ApiBuilder;
 import com.ddhuy4298.chatapp.databinding.ActivityProfileBinding;
 import com.ddhuy4298.chatapp.listeners.ProfileActivityListener;
+import com.ddhuy4298.chatapp.models.Data;
+import com.ddhuy4298.chatapp.models.FCM;
 import com.ddhuy4298.chatapp.models.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -28,6 +33,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ProfileActivity extends AppCompatActivity implements ProfileActivityListener {
 
@@ -113,6 +123,11 @@ public class ProfileActivity extends AppCompatActivity implements ProfileActivit
     public void onResetPasswordClick() {
         Intent intent = new Intent(ProfileActivity.this, ResetPasswordActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void onLanguageClick() {
+
     }
 
     @Override
