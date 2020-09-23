@@ -19,10 +19,13 @@ import com.ddhuy4298.chatapp.listeners.ResetPasswordActivityListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class ResetPasswordActivity extends AppCompatActivity implements ResetPasswordActivityListener {
 
     private ActivityResetPasswordBinding binding;
+    private String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -60,7 +63,7 @@ public class ResetPasswordActivity extends AppCompatActivity implements ResetPas
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     if (task.isSuccessful()) {
-                        Toast.makeText(ResetPasswordActivity.this, "Please Check Your Email", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ResetPasswordActivity.this, "Check your email to reset your password", Toast.LENGTH_SHORT).show();
 //                        startActivity(new Intent(ResetPasswordActivity.this, LoginActivity.class));
                         finish();
                     } else {
@@ -70,5 +73,25 @@ public class ResetPasswordActivity extends AppCompatActivity implements ResetPas
                 }
             });
         }
+    }
+
+    private void status(String status) {
+        DatabaseReference reference = FirebaseDatabase.getInstance()
+                .getReference("Users")
+                .child(currentUserId)
+                .child(status);
+        reference.setValue(status);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        status("online");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        status("offline");
     }
 }

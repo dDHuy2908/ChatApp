@@ -20,10 +20,6 @@ public class SplashActivity extends AppCompatActivity {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-//                    FirebaseDatabase database = FirebaseDatabase.getInstance();
-//                    database.setPersistenceEnabled(true);
-//                    DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-//                    reference.keepSynced(true);
                     Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
                     startActivity(intent);
                     finish();
@@ -39,9 +35,9 @@ public class SplashActivity extends AppCompatActivity {
     public static boolean isNetworkStatusAvailable(Context context) {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivityManager != null) {
-            NetworkInfo netInfos = connectivityManager.getActiveNetworkInfo();
-            if (netInfos != null) {
-                return netInfos.isConnected();
+            NetworkInfo netInfo = connectivityManager.getActiveNetworkInfo();
+            if (netInfo != null) {
+                return netInfo.isConnected();
             }
         }
         return false;

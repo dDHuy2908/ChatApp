@@ -23,13 +23,12 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.util.HashMap;
-
 public class AvatarPreviewActivity extends AppCompatActivity implements AvatarPreviewActivityListener {
 
     private ActivityAvatarPreviewBinding binding;
     private static final int REQUEST_IMAGE = 1;
     private Uri avatarUri;
+    private String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -69,24 +68,29 @@ public class AvatarPreviewActivity extends AppCompatActivity implements AvatarPr
             progressDialog.setTitle("Uploading...");
             progressDialog.show();
 
-            final StorageReference storageReference = FirebaseStorage.getInstance().getReference("uploads")
-                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid() + "_" + System.currentTimeMillis());
-            storageReference.putFile(avatarUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            final StorageReference storageReference = FirebaseStorage.getInstance()
+                    .getReference("uploads")
+                    .child(currentUserId + "_" + System.currentTimeMillis());
+            storageReference.putFile(avatarUri)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
-                        public void onSuccess(Uri uri) {
-                            Uri downloadUrl = uri;
-                            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                            reference.child("avatar").setValue(downloadUrl.toString());
-                            progressDialog.dismiss();
-                            Toast.makeText(AvatarPreviewActivity.this, "Changed avatar!", Toast.LENGTH_SHORT).show();
-                            finish();
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    Uri downloadUrl = uri;
+                                    DatabaseReference reference = FirebaseDatabase.getInstance()
+                                            .getReference("Users")
+                                            .child(currentUserId)
+                                            .child("avatar");
+                                    reference.setValue(downloadUrl.toString());
+                                    progressDialog.dismiss();
+                                    Toast.makeText(AvatarPreviewActivity.this, "Changed avatar!", Toast.LENGTH_SHORT).show();
+                                    finish();
+                                }
+                            });
                         }
                     });
-                }
-            });
         } else {
             Toast.makeText(AvatarPreviewActivity.this, "No Image Selected!", Toast.LENGTH_SHORT).show();
         }
@@ -99,11 +103,10 @@ public class AvatarPreviewActivity extends AppCompatActivity implements AvatarPr
     }
 
     private void status(String status) {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("status", status);
-        reference.updateChildren(hashMap);
+        DatabaseReference reference = FirebaseDatabase.getInstance()
+                .getReference("Users")
+                .child(currentUserId).child("status");
+        reference.setValue(status);
     }
 
     @Override

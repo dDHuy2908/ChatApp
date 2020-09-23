@@ -113,9 +113,7 @@ public class MainActivity extends AppCompatActivity {
     private void status(String status) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("status", status);
-        reference.updateChildren(hashMap);
+        reference.child("status").setValue(status);
     }
 
     @Override
@@ -128,11 +126,5 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         status("offline");
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.e("MainAcitivity", "finished");
     }
 }

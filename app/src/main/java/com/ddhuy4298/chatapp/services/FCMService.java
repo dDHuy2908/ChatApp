@@ -11,6 +11,7 @@ import androidx.core.app.NotificationCompat;
 
 import com.ddhuy4298.chatapp.R;
 import com.ddhuy4298.chatapp.activities.MainActivity;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 

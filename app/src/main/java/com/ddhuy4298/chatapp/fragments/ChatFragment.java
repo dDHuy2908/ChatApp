@@ -2,7 +2,6 @@ package com.ddhuy4298.chatapp.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -25,14 +24,16 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class ChatFragment extends BaseFragment<FragmentChatBinding> implements UserListener, View.OnClickListener {
 
     private ChatAdapter adapter;
-    private String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    private String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
     @Override
     protected int getLayoutId() {
@@ -53,8 +54,9 @@ public class ChatFragment extends BaseFragment<FragmentChatBinding> implements U
     }
 
     private void showChattedUsers() {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Chatted").child(userId);
-        reference.addValueEventListener(new ValueEventListener() {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Chatted").child(currentUserId);
+        Query query = reference.orderByChild("lastedMessageTime");
+        query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 ArrayList<Chatted> chattedList = new ArrayList<>();
@@ -62,6 +64,7 @@ public class ChatFragment extends BaseFragment<FragmentChatBinding> implements U
                     Chatted chatted = snapshot.getValue(Chatted.class);
                     chattedList.add(chatted);
                 }
+                Collections.reverse(chattedList);
                 getChattedList(chattedList);
             }
 
@@ -79,7 +82,7 @@ public class ChatFragment extends BaseFragment<FragmentChatBinding> implements U
         ((AppCompatActivity) getActivity()).getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         binding.toolbar.setNavigationIcon(null);
         final ImageView imageView = binding.toolbar.findViewById(R.id.avatar);
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(userId);
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(currentUserId);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -110,23 +113,19 @@ public class ChatFragment extends BaseFragment<FragmentChatBinding> implements U
                 ArrayList<User> data = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     User user = snapshot.getValue(User.class);
-                    Log.e("Test user order", user.getName());
-                    for (Chatted chatted : chattedList) {
-                        if (user.getId().equals(chatted.getId())) {
-                            data.add(user);
-                            //reference.child(user.getId()).child("lastedMessageTime").setValue(chatted.getLastedMessageTime());
+                    data.add(user);
+                }
+                ArrayList<User> data1 = new ArrayList<>();
+                for (int i = 0; i < chattedList.size(); i++) {
+                    for (int j = 0; j < data.size(); j++) {
+                        if (chattedList.get(i).getId().equals(data.get(j).getId())) {
+                            data1.add(data.get(j));
                         }
                     }
                 }
-//                Collections.sort(data, new Comparator<User>() {
-//                    @Override
-//                    public int compare(User o1, User o2) {
-//                        return o1.getLastedMessageTime() > o2.getLastedMessageTime() ? -1 : 1;
-//                    }
-//                });
-                adapter.setData(data);
+                adapter.setData(data1);
                 adapter.notifyDataSetChanged();
-                if (data.size() == 0) {
+                if (data1.size() == 0) {
                     binding.tvNoMessage.setVisibility(View.VISIBLE);
                 } else {
                     binding.tvNoMessage.setVisibility(View.GONE);

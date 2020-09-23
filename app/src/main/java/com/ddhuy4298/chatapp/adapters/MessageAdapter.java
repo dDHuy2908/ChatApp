@@ -114,12 +114,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageH
                     } else {
                         Glide.with(holder.leftBinding.avatar).load(receiverAvatar).into(holder.leftBinding.avatar);
                     }
-                } else if (!data.get(0).getSender().equals(data.get(1).getSender())) {
-                    if (receiverAvatar.equals("default")) {
-                        holder.leftBinding.avatar.setImageResource(R.drawable.ic_avatar);
-                    } else {
-                        Glide.with(holder.leftBinding.avatar).load(receiverAvatar).into(holder.leftBinding.avatar);
-                    }
                 } else if (position == data.size() - 1) {
                     if (receiverAvatar.equals("default")) {
                         holder.leftBinding.avatar.setImageResource(R.drawable.ic_avatar);

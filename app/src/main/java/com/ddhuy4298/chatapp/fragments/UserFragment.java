@@ -34,7 +34,7 @@ import java.util.ArrayList;
 public class UserFragment extends BaseFragment<FragmentUserBinding> implements UserListener, View.OnClickListener {
 
     private UserAdapter adapter;
-    private String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    private String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
     @Override
     protected int getLayoutId() {
@@ -107,7 +107,6 @@ public class UserFragment extends BaseFragment<FragmentUserBinding> implements U
                         User user = snapshot.getValue(User.class);
                         if (!user.getId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                             data.add(user);
-                            Log.e("Test user", user.getName());
                         }
                     }
                     adapter.setData(data);
@@ -129,7 +128,7 @@ public class UserFragment extends BaseFragment<FragmentUserBinding> implements U
         ((AppCompatActivity) getActivity()).getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         binding.toolbar.setNavigationIcon(null);
         final ImageView imageView = binding.toolbar.findViewById(R.id.avatar);
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(userId);
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(currentUserId);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

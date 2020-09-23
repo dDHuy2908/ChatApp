@@ -30,7 +30,6 @@ import com.google.firebase.database.FirebaseDatabase;
 public class RegisterActivity extends AppCompatActivity implements RegisterActivityListener {
 
     private ActivityRegisterBinding binding;
-    private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -69,23 +68,23 @@ public class RegisterActivity extends AppCompatActivity implements RegisterActiv
     }
 
     private void register(final String email, final String password, final String name, final String phone) {
-        firebaseAuth.createUserWithEmailAndPassword(email, password)
+        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
                 .addOnSuccessListener(this, new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(AuthResult authResult) {
-                        String userId = firebaseAuth.getCurrentUser().getUid();
+                        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(userId);
+                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(currentUserId);
                         User user = new User();
                         user.setEmail(email);
                         user.setName(name);
                         user.setPassword(password);
                         user.setPhone(phone);
-                        user.setId(userId);
+                        user.setId(currentUserId);
                         user.setAvatar("default");
                         user.setStatus("offline");
-                        user.setLastedMessageTime(0);
                         user.setSearchName(name.toLowerCase());
+
                         reference.setValue(user)
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override

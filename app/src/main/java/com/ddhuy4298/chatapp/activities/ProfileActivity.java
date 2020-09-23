@@ -5,12 +5,10 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,11 +19,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.ddhuy4298.chatapp.R;
-import com.ddhuy4298.chatapp.api.ApiBuilder;
 import com.ddhuy4298.chatapp.databinding.ActivityProfileBinding;
 import com.ddhuy4298.chatapp.listeners.ProfileActivityListener;
-import com.ddhuy4298.chatapp.models.Data;
-import com.ddhuy4298.chatapp.models.FCM;
 import com.ddhuy4298.chatapp.models.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -34,17 +29,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import java.util.HashMap;
 
 public class ProfileActivity extends AppCompatActivity implements ProfileActivityListener {
 
     private ActivityProfileBinding binding;
-    private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     private boolean clickable = true;
-    private DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+    private String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,6 +46,9 @@ public class ProfileActivity extends AppCompatActivity implements ProfileActivit
         binding = DataBindingUtil.setContentView(this, R.layout.activity_profile);
         binding.setListener(this);
 
+        DatabaseReference reference = FirebaseDatabase.getInstance()
+                .getReference("Users")
+                .child(currentUserId);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -63,7 +57,6 @@ public class ProfileActivity extends AppCompatActivity implements ProfileActivit
                 if (user.getAvatar().equals("default")) {
                     binding.avatar.setImageResource(R.drawable.ic_avatar);
                 } else {
-                    //Glide.with(binding.avatar).load(user.getAvatar()).into(binding.avatar);
                     Glide.with(getApplicationContext())
                             .asBitmap()
                             .load(user.getAvatar())
@@ -101,9 +94,12 @@ public class ProfileActivity extends AppCompatActivity implements ProfileActivit
     @Override
     public void onLogOutClick() {
         if (clickable) {
-            firebaseAuth.signOut();
+            DatabaseReference reference = FirebaseDatabase.getInstance()
+                    .getReference("Tokens")
+                    .child(currentUserId);
+            reference.setValue("");
+            FirebaseAuth.getInstance().signOut();
             Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
-//                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
             MainActivity.main.finish();
             finish();
@@ -127,7 +123,6 @@ public class ProfileActivity extends AppCompatActivity implements ProfileActivit
 
     @Override
     public void onLanguageClick() {
-
     }
 
     @Override

@@ -3,7 +3,6 @@ package com.ddhuy4298.chatapp.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -51,6 +50,7 @@ public class ChatActivity extends AppCompatActivity implements ChatActivityListe
     private ActivityChatBinding binding;
     private MessageAdapter adapter;
     private ValueEventListener eventListener;
+    private final String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -108,7 +108,6 @@ public class ChatActivity extends AppCompatActivity implements ChatActivityListe
         binding.rvMessage.setLayoutManager(layoutManager);
         adapter = new MessageAdapter(getLayoutInflater());
         binding.rvMessage.setAdapter(adapter);
-        final String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         Intent intent = getIntent();
         final String receiverId = intent.getStringExtra("userId");
         String receiverAvatar = intent.getStringExtra("userAvatar");
@@ -180,13 +179,12 @@ public class ChatActivity extends AppCompatActivity implements ChatActivityListe
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Messages");
         Intent intent = getIntent();
         final String receiverId = intent.getStringExtra("userId");
-        final String senderId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         String content = binding.edtMessage.getText().toString();
         if (content.isEmpty() || content.trim().isEmpty()) {
             return;
         }
         final Message message = new Message();
-        message.setSender(senderId);
+        message.setSender(currentUserId);
         message.setReceiver(receiverId);
         message.setMessage(content);
         message.setSeen(false);
@@ -204,11 +202,8 @@ public class ChatActivity extends AppCompatActivity implements ChatActivityListe
                     }
                 });
 
-//        DatabaseReference userReference = FirebaseDatabase.getInstance().getReference("Users").child(senderId);
-//        userReference.child("lastedMessageTime").setValue(System.currentTimeMillis());
-
         final DatabaseReference chattedReference1 = FirebaseDatabase.getInstance().getReference("Chatted")
-                .child(senderId)
+                .child(currentUserId)
                 .child(receiverId);
         chattedReference1.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -226,13 +221,13 @@ public class ChatActivity extends AppCompatActivity implements ChatActivityListe
         });
         final DatabaseReference chattedReference2 = FirebaseDatabase.getInstance().getReference("Chatted")
                 .child(receiverId)
-                .child(senderId);
+                .child(currentUserId);
         chattedReference2.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 chattedReference2.child("lastedMessageTime").setValue(message.getId());
                 if (!dataSnapshot.exists()) {
-                    chattedReference2.child("id").setValue(senderId);
+                    chattedReference2.child("id").setValue(currentUserId);
                 }
             }
 
@@ -244,14 +239,12 @@ public class ChatActivity extends AppCompatActivity implements ChatActivityListe
 
         final String[] userToken = {""};
         DatabaseReference tokenReference = FirebaseDatabase.getInstance()
-                .getReference("Users")
-                .child(receiverId)
-                .child("token");
+                .getReference("Tokens")
+                .child(receiverId);
         tokenReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 userToken[0] = snapshot.getValue(String.class);
-                Log.e("userToken", userToken[0]);
             }
 
             @Override
@@ -261,7 +254,7 @@ public class ChatActivity extends AppCompatActivity implements ChatActivityListe
         });
 
         Data data = new Data();
-        data.setTitle(senderId);
+        data.setTitle(currentUserId);
         data.setBody(content);
         FCM fcm = new FCM();
         fcm.setTo(userToken[0]);
@@ -313,10 +306,8 @@ public class ChatActivity extends AppCompatActivity implements ChatActivityListe
 
     private void status(String status) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("status", status);
-        reference.updateChildren(hashMap);
+                .child(currentUserId);
+        reference.child("status").setValue(status);
     }
 
     @Override

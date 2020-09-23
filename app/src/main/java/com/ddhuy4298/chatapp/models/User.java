@@ -3,7 +3,6 @@ package com.ddhuy4298.chatapp.models;
 public class User {
 
     private String email, name, phone, password, id, avatar, status, searchName;
-    private long lastedMessageTime;
 
     public String getSearchName() {
         return searchName;
@@ -19,14 +18,6 @@ public class User {
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    public long getLastedMessageTime() {
-        return lastedMessageTime;
-    }
-
-    public void setLastedMessageTime(long lastedMessageTime) {
-        this.lastedMessageTime = lastedMessageTime;
     }
 
     public String getAvatar() {

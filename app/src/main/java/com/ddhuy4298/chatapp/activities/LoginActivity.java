@@ -24,22 +24,25 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 public class LoginActivity extends AppCompatActivity implements LoginActivityListener {
 
     public static final int REQUEST_CODE = 1;
     private ActivityLoginBinding binding;
-    private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     private final String[] PERMISSIONS = {
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE
     };
+    private FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+    private String currentUserId = currentUser.getUid();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -71,7 +74,7 @@ public class LoginActivity extends AppCompatActivity implements LoginActivityLis
     private void init() {
         binding.setListener(this);
 
-        if (firebaseAuth.getCurrentUser() != null) {
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             startActivity(intent);
@@ -100,19 +103,23 @@ public class LoginActivity extends AppCompatActivity implements LoginActivityLis
     }
 
     private void login(String email, String password) {
-        firebaseAuth.signInWithEmailAndPassword(email, password)
+        FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
                 .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(AuthResult authResult) {
 
-                        final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users")
-                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                        final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Tokens")
+                                .child(currentUserId);
 
-                        reference.addValueEventListener(new ValueEventListener() {
+                        reference.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                reference.child("token").setValue(FirebaseInstanceId.getInstance().getToken());
-
+                                FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
+                                    @Override
+                                    public void onSuccess(InstanceIdResult instanceIdResult) {
+                                        reference.setValue(instanceIdResult.getToken());
+                                    }
+                                });
                             }
 
                             @Override
