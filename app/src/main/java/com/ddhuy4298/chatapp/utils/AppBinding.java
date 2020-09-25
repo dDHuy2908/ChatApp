@@ -30,7 +30,7 @@ public class AppBinding {
 
     @BindingAdapter("date")
     public static void setDate(TextView tv, long time) {
-        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM HH:mm");
         tv.setText(format.format(time));
     }
 }

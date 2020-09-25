@@ -1,8 +1,10 @@
 package com.ddhuy4298.chatapp.activities;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -51,14 +53,21 @@ public class ChatActivity extends AppCompatActivity implements ChatActivityListe
     private MessageAdapter adapter;
     private ValueEventListener eventListener;
     private final String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    private Intent intent;
+    private String receiverId;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        manager.cancel(429899);
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(getResources().getColor(R.color.defaultBackgroundColor));
         binding = DataBindingUtil.setContentView(this, R.layout.activity_chat);
+        intent = getIntent();
+        String receiverId = intent.getStringExtra("userId");
+        Log.e("ChatActivity", receiverId);
 
         /**
          * Only show send button when editText.length() >= 1
@@ -85,9 +94,9 @@ public class ChatActivity extends AppCompatActivity implements ChatActivityListe
 //            }
 //        });
 
-        setupToolbar();
+        setupMessageList(receiverId);
 
-        setupMessageList();
+        setupToolbar();
 
         seenMessage();
     }
@@ -101,22 +110,35 @@ public class ChatActivity extends AppCompatActivity implements ChatActivityListe
         return super.dispatchTouchEvent(ev);
     }
 
-    private void setupMessageList() {
+    private void setupMessageList(String receiverId) {
         binding.setListener(this);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setStackFromEnd(true);
         binding.rvMessage.setLayoutManager(layoutManager);
         adapter = new MessageAdapter(getLayoutInflater());
         binding.rvMessage.setAdapter(adapter);
-        Intent intent = getIntent();
-        final String receiverId = intent.getStringExtra("userId");
-        String receiverAvatar = intent.getStringExtra("userAvatar");
-        if (receiverAvatar.equals("default")) {
-            binding.avatar.setImageResource(R.drawable.ic_avatar);
-        } else {
-            Glide.with(binding.avatar).load(receiverAvatar).into(binding.avatar);
-        }
-        adapter.setReceiverAvatar(receiverAvatar);
+        DatabaseReference reference1 = FirebaseDatabase.getInstance()
+                .getReference("Users")
+                .child(receiverId)
+                .child("avatar");
+        reference1.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                String avatar = snapshot.getValue(String.class);
+                if (avatar.equals("default")) {
+                    binding.avatar.setImageResource(R.drawable.ic_avatar);
+                } else {
+                    Glide.with(binding.avatar).load(avatar).into(binding.avatar);
+                }
+                adapter.setReceiverAvatar(avatar);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Messages");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -157,7 +179,6 @@ public class ChatActivity extends AppCompatActivity implements ChatActivityListe
         });
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
-        Intent intent = getIntent();
         String userId = intent.getStringExtra("userId");
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(userId);
         reference.addValueEventListener(new ValueEventListener() {
@@ -253,30 +274,46 @@ public class ChatActivity extends AppCompatActivity implements ChatActivityListe
             }
         });
 
-        Data data = new Data();
-        data.setTitle(currentUserId);
-        data.setBody(content);
-        FCM fcm = new FCM();
-        fcm.setTo(userToken[0]);
-        fcm.setData(data);
+        DatabaseReference reference1 = FirebaseDatabase.getInstance()
+                .getReference("Users")
+                .child(currentUserId);
+        reference1.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                User user = snapshot.getValue(User.class);
+                Data data = new Data();
+                data.setTitle(user.getName());
+                data.setBody(content);
+                data.setSender(currentUserId);
+                data.setReceiver(receiverId);
+                FCM fcm = new FCM();
+                fcm.setTo(userToken[0]);
+                fcm.setData(data);
 
-        ApiBuilder.getInstance()
-                .sendNotification(fcm)
-                .enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        if (response.code() == 200) {
-                            Toast.makeText(ChatActivity.this, "Success", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(ChatActivity.this, "Failed", Toast.LENGTH_SHORT).show();
-                        }
-                    }
+                ApiBuilder.getInstance()
+                        .sendNotification(fcm)
+                        .enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                if (response.code() == 200) {
+                                    Toast.makeText(ChatActivity.this, "Success", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(ChatActivity.this, "Failed", Toast.LENGTH_SHORT).show();
+                                }
+                            }
 
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
 
-                    }
-                });
+                            }
+                        });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     private void seenMessage() {

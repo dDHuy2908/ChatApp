@@ -74,26 +74,21 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageH
                     holder.rightBinding.tvTime.setVisibility(View.GONE);
                     holder.rightBinding.tvDate.setVisibility(View.VISIBLE);
                 } else {
-                    if (checkTime(data.get(position).getId(), data.get(position - 1).getId()) > 300000) {
-                        holder.rightBinding.tvTime.setVisibility(View.VISIBLE);
-                        holder.rightBinding.tvDate.setVisibility(View.GONE);
-                    } else if (checkTime(data.get(position).getId(), data.get(position - 1).getId()) < 300000) {
+                    if (checkDate(data.get(position).getId())) {
+                        if (checkTime(data.get(position).getId(), data.get(position - 1).getId()) > 300000) {
+                            holder.rightBinding.tvTime.setVisibility(View.VISIBLE);
+                            holder.rightBinding.tvDate.setVisibility(View.GONE);
+                        } else if (checkTime(data.get(position).getId(), data.get(position - 1).getId()) < 300000) {
+                            holder.rightBinding.tvTime.setVisibility(View.GONE);
+                            holder.rightBinding.tvDate.setVisibility(View.GONE);
+                        }
+                    } else {
                         holder.rightBinding.tvTime.setVisibility(View.GONE);
-                        holder.rightBinding.tvDate.setVisibility(View.GONE);
+                        holder.rightBinding.tvDate.setVisibility(View.VISIBLE);
                     }
                 }
-//                else if (checkDate(data.get(position).getId())) {
-//                    if (checkTime(data.get(position).getId(), data.get(position - 1).getId()) > 300000) {
-//                        holder.rightBinding.tvTime.setVisibility(View.VISIBLE);
-//                        holder.rightBinding.tvDate.setVisibility(View.GONE);
-//                    } else if (checkTime(data.get(position).getId(), data.get(position - 1).getId()) < 300000) {
-//                        holder.rightBinding.tvTime.setVisibility(View.GONE);
-//                        holder.rightBinding.tvDate.setVisibility(View.GONE);
-//                    }
-//                } else if (!checkDate(data.get(position).getId())){
-//                    holder.rightBinding.tvTime.setVisibility(View.GONE);
-//                    holder.rightBinding.tvDate.setVisibility(View.GONE);
-//                }
+
+
                 if (position == data.size() - 1 && data.size() > 0) {
                     holder.rightBinding.tvSeen.setVisibility(View.VISIBLE);
                     if (data.get(position).isSeen()) {
@@ -129,30 +124,24 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageH
                         Glide.with(holder.leftBinding.avatar).load(receiverAvatar).into(holder.leftBinding.avatar);
                     }
                 }
+
                 if (position == 0) {
                     holder.leftBinding.tvTime.setVisibility(View.GONE);
                     holder.leftBinding.tvDate.setVisibility(View.VISIBLE);
                 } else {
-                    if (checkTime(data.get(position).getId(), data.get(position - 1).getId()) > 300000) {
-                        holder.leftBinding.tvTime.setVisibility(View.VISIBLE);
-                        holder.leftBinding.tvDate.setVisibility(View.GONE);
-                    } else if (checkTime(data.get(position).getId(), data.get(position - 1).getId()) < 300000) {
+                    if (checkDate(data.get(position).getId())) {
+                        if (checkTime(data.get(position).getId(), data.get(position - 1).getId()) > 300000) {
+                            holder.leftBinding.tvTime.setVisibility(View.VISIBLE);
+                            holder.leftBinding.tvDate.setVisibility(View.GONE);
+                        } else if (checkTime(data.get(position).getId(), data.get(position - 1).getId()) < 300000) {
+                            holder.leftBinding.tvTime.setVisibility(View.GONE);
+                            holder.leftBinding.tvDate.setVisibility(View.GONE);
+                        }
+                    } else {
                         holder.leftBinding.tvTime.setVisibility(View.GONE);
-                        holder.leftBinding.tvDate.setVisibility(View.GONE);
+                        holder.leftBinding.tvDate.setVisibility(View.VISIBLE);
                     }
                 }
-//                else if (checkDate(data.get(position).getId())) {
-//                    if (checkTime(data.get(position).getId(), data.get(position - 1).getId()) > 300000) {
-//                        holder.leftBinding.tvTime.setVisibility(View.VISIBLE);
-//                        holder.leftBinding.tvDate.setVisibility(View.GONE);
-//                    } else if (checkTime(data.get(position).getId(), data.get(position - 1).getId()) < 300000) {
-//                        holder.leftBinding.tvTime.setVisibility(View.GONE);
-//                        holder.leftBinding.tvDate.setVisibility(View.GONE);
-//                    }
-//                } else if (!checkDate(data.get(position).getId())) {
-//                    holder.leftBinding.tvTime.setVisibility(View.GONE);
-//                    holder.leftBinding.tvDate.setVisibility(View.GONE);
-//                }
                 break;
         }
     }
@@ -226,7 +215,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageH
     }
 
     private long checkTime(long time1, long time2) {
-        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         String time1String = format.format(time1);
         String time2String = format.format(time2);
         long diff = 0;

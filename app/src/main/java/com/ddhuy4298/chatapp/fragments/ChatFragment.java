@@ -143,7 +143,7 @@ public class ChatFragment extends BaseFragment<FragmentChatBinding> implements U
     public void onUserClick(User receiver) {
         Intent intent = new Intent(getContext(), ChatActivity.class);
         intent.putExtra("userId", receiver.getId());
-        intent.putExtra("userAvatar", receiver.getAvatar());
+//        intent.putExtra("userAvatar", receiver.getAvatar());
         startActivity(intent);
     }
 
