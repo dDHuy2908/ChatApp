@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -41,13 +42,21 @@ public class FCMService extends FirebaseMessagingService {
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
-//        String receiver = remoteMessage.getData().get("receiver");
-//        if (receiver.equals(currentUserId)) {
-//            showNotification(remoteMessage);
-//        }
         ComponentName componentName = new ComponentName(this, FCMService.class);
         getPackageManager().setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
                 PackageManager.DONT_KILL_APP);
+
+        SharedPreferences preferences = getSharedPreferences("PREFS", MODE_PRIVATE);
+        String currentReceiver = preferences.getString("currentReceiver", "none");
+
+        String receiver = remoteMessage.getData().get("receiver");
+        String sender = remoteMessage.getData().get("sender");
+        if (receiver.equals(currentUserId) && !currentReceiver.equals(sender)) {
+            showNotification(remoteMessage);
+        }
+    }
+
+    private void showNotification(RemoteMessage remoteMessage) {
         NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         String channelId = "ChatApp";
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -88,9 +97,5 @@ public class FCMService extends FirebaseMessagingService {
         notification.setContentIntent(pendingIntent);
 
         manager.notify(429899, notification.build());
-    }
-
-    private void showNotification(RemoteMessage remoteMessage) {
-
     }
 }

@@ -3,6 +3,7 @@ package com.ddhuy4298.chatapp.activities;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -341,6 +342,12 @@ public class ChatActivity extends AppCompatActivity implements ChatActivityListe
         });
     }
 
+    private void currentReceiver(String userId) {
+        SharedPreferences.Editor editor = getSharedPreferences("PREFS", MODE_PRIVATE).edit();
+        editor.putString("currentReceiver", userId);
+        editor.apply();
+    }
+
     private void status(String status) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users")
                 .child(currentUserId);
@@ -351,6 +358,7 @@ public class ChatActivity extends AppCompatActivity implements ChatActivityListe
     protected void onResume() {
         super.onResume();
         status("online");
+        currentReceiver(receiverId);
     }
 
     @Override
@@ -361,5 +369,6 @@ public class ChatActivity extends AppCompatActivity implements ChatActivityListe
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(receiverId);
         reference.removeEventListener(eventListener);
         status("offline");
+        currentReceiver("none");
     }
 }
